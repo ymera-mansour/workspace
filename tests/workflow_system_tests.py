@@ -15,6 +15,9 @@ class TestWorkflowValidation:
     @pytest.mark.asyncio
     async def test_valid_workflow(self):
         """Test workflow with valid tasks"""
+        import sys
+        import os
+        sys.path.insert(0, os.path.dirname(__file__))
         from workflow_validation_system import WorkflowValidator, Task, TaskPriority
         
         validator = WorkflowValidator()
