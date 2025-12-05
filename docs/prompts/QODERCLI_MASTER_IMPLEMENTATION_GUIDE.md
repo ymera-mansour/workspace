@@ -633,17 +633,17 @@ class ModelRegistry:
                 rate_limit_rpm=30
             ),
             
-            # Gemini Models (FREE TIER)
+            # Gemini Models (FREE TIER up to 15 RPM, then paid)
             "gemini/gemini-1.5-flash": ModelCapabilities(
                 model_id="gemini-1.5-flash",
                 provider="gemini",
                 context_length=1000000,
-                cost_per_1m_tokens=0.15,
+                cost_per_1m_tokens=0.15,  # Paid tier cost (free tier: 15 RPM)
                 speed_tier="fast",
                 quality_tier="high",
                 specializations=["general", "long_context", "multimodal"],
-                is_free=True,  # Free tier available
-                rate_limit_rpm=15
+                is_free=True,  # Free tier: 15 RPM, no cost within limits
+                rate_limit_rpm=15  # Free tier limit
             ),
             
             # OpenRouter Free Models
@@ -1738,7 +1738,12 @@ Each phase is complete when:
 3. ✅ Tests pass with >80% coverage
 4. ✅ Documentation is complete
 5. ✅ Integration with previous phases verified
-6. ✅ Performance meets targets
+6. ✅ Performance meets targets:
+   - API response time < 2 seconds
+   - Model selection < 100ms
+   - Workflow execution success rate > 95%
+   - Test coverage > 80%
+   - No critical security vulnerabilities
 
 ---
 

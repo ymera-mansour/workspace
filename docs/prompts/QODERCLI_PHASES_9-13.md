@@ -70,10 +70,12 @@ class CodingAgent(BaseAgent):
         super().__init__(agent_id="coding_agent", capabilities=capabilities)
         
         # Specialized for code
+        # Preferred models (ordered by cost: free → paid)
         self.preferred_models = [
-            "mistral/codestral",
-            "openrouter/deepseek/deepseek-coder-6.7b-instruct:free",
-            "anthropic/claude-3.5-sonnet"
+            "openrouter/deepseek/deepseek-coder-6.7b-instruct:free",  # FREE
+            "groq/llama-3.1-70b-versatile",  # FREE
+            "mistral/codestral",  # PAID (~$0.30/1M tokens)
+            "anthropic/claude-3.5-sonnet"  # PAID (~$3/1M tokens)
         ]
     
     async def execute(self, task: Dict[str, Any]) -> Dict[str, Any]:
@@ -551,7 +553,7 @@ class CodeEngine:
         """Scan code for security issues"""
         
         try:
-            from bandit import __main__ as bandit_main
+            # Use bandit via subprocess (not internal __main__)
             
             # Create temporary file
             with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
