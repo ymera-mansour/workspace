@@ -378,14 +378,14 @@ class AgentPerformanceAnalyzer:
                 AVG(quality_score) as avg_quality,
                 SUM(CASE WHEN success THEN 1 ELSE 0 END)::float / COUNT(*) as success_rate
             FROM agent_executions
-            WHERE agent_name = $1 AND timestamp > NOW() - INTERVAL '%s days'
+            WHERE agent_name = $1 AND timestamp > NOW() - $2::interval
             GROUP BY DATE(timestamp)
             ORDER BY date
         )
         SELECT * FROM daily_stats
-        """ % days
+        """
         
-        daily_stats = await self.db.fetch(query, agent_name)
+        daily_stats = await self.db.fetch(query, agent_name, f"{days} days")
         
         # Calculate trends
         if len(daily_stats) >= 7:
@@ -416,13 +416,13 @@ class AgentPerformanceAnalyzer:
         error_query = """
         SELECT error_type, COUNT(*) as count
         FROM agent_executions
-        WHERE agent_name = $1 AND success = FALSE AND timestamp > NOW() - INTERVAL '%s days'
+        WHERE agent_name = $1 AND success = FALSE AND timestamp > NOW() - $2::interval
         GROUP BY error_type
         ORDER BY count DESC
         LIMIT 5
-        """ % days
+        """
         
-        common_errors = await self.db.fetch(error_query, agent_name)
+        common_errors = await self.db.fetch(error_query, agent_name, f"{days} days")
         
         return {
             "agent_name": agent_name,
