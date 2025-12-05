@@ -1,0 +1,769 @@
+========================================
+PHASE 2 - QODER: CREATE CORE SERVICES
+========================================
+
+=== YOUR IDENTITY ===
+Your name: QODER
+Your role: Core services architecture and implementation
+Your phase: 2
+Your workspace: C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\
+
+=== CONTEXT FROM PHASE 1 ===
+Phase 1 is COMPLETE with the following deliverables:
+1. âœ… shared\ library created (by you in Phase 1A)
+   - config\environment.py
+   - database\db_manager.py
+   - exceptions\, middleware\, models\, utils\ (structure ready)
+2. âœ… Master test plan documented (by Gemini in Phase 1B)
+3. âœ… Test framework installed and validated (by Claude in Phase 1C)
+   - 24 test stubs ready
+   - Test runner operational
+   - Fixtures configured
+
+=== YOUR MISSION ===
+Create the unified `core_services\` directory by:
+1. Consolidating Agent Manager from SOURCE_DIR
+2. Consolidating all Engines (Code, Database, Web, etc.)
+3. Consolidating AI-MCP integration
+4. Creating a clean, modular architecture
+5. Ensuring proper imports from shared\
+
+**Critical:** You are REFACTORING and CONSOLIDATING existing code, not creating from scratch.
+
+=== SOURCE DIRECTORY (READ-ONLY) ===
+Location: C:\Users\Mohamed Mansour\Desktop\QoderAgentFiles\
+
+You will analyze and extract code from:
+```
+QoderAgentFiles\
+â"œâ"€â"€ agent_manager\
+â"‚   â"œâ"€â"€ main.py
+â"‚   â"œâ"€â"€ agent_loader.py
+â"‚   â"œâ"€â"€ task_dispatcher.py
+â"‚   â""â"€â"€ ... (other agent manager files)
+â"‚
+â"œâ"€â"€ engines\
+â"‚   â"œâ"€â"€ code_engine.py
+â"‚   â"œâ"€â"€ database_engine.py
+â"‚   â"œâ"€â"€ web_engine.py
+â"‚   â""â"€â"€ ... (other engines)
+â"‚
+â"œâ"€â"€ ai_mcp\
+â"‚   â"œâ"€â"€ mcp_client.py
+â"‚   â"œâ"€â"€ provider_config.py
+â"‚   â""â"€â"€ ... (AI-MCP files)
+â"‚
+â""â"€â"€ unified_agents\ (DON'T TOUCH - Phase 3)
+```
+
+=== TARGET DIRECTORY (WRITE) ===
+Location: C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\
+
+You will create:
+```
+YmeraRefactor\
+â"œâ"€â"€ shared\ (already exists from Phase 1)
+â"‚
+â"œâ"€â"€ core_services\ (YOU CREATE THIS)
+â"‚   â"‚
+â"‚   â"œâ"€â"€ __init__.py
+â"‚   â"œâ"€â"€ README.md
+â"‚   â"œâ"€â"€ requirements.txt
+â"‚   â"‚
+â"‚   â"œâ"€â"€ agent_manager\
+â"‚   â"‚   â"œâ"€â"€ __init__.py
+â"‚   â"‚   â"œâ"€â"€ manager.py (main orchestrator)
+â"‚   â"‚   â"œâ"€â"€ agent_loader.py (refactored from SOURCE)
+â"‚   â"‚   â"œâ"€â"€ task_dispatcher.py (refactored from SOURCE)
+â"‚   â"‚   â"œâ"€â"€ agent_registry.py (new - tracks available agents)
+â"‚   â"‚   â""â"€â"€ models.py (data models for agents/tasks)
+â"‚   â"‚
+â"‚   â"œâ"€â"€ engines\
+â"‚   â"‚   â"œâ"€â"€ __init__.py
+â"‚   â"‚   â"œâ"€â"€ base_engine.py (abstract base class)
+â"‚   â"‚   â"œâ"€â"€ code_engine.py (refactored from SOURCE)
+â"‚   â"‚   â"œâ"€â"€ database_engine.py (refactored from SOURCE)
+â"‚   â"‚   â"œâ"€â"€ web_engine.py (refactored from SOURCE)
+â"‚   â"‚   â"œâ"€â"€ analysis_engine.py (if exists in SOURCE)
+â"‚   â"‚   â""â"€â"€ engine_factory.py (new - engine instantiation)
+â"‚   â"‚
+â"‚   â""â"€â"€ ai_mcp\
+â"‚       â"œâ"€â"€ __init__.py
+â"‚       â"œâ"€â"€ client.py (refactored from SOURCE mcp_client.py)
+â"‚       â"œâ"€â"€ providers\
+â"‚       â"‚   â"œâ"€â"€ __init__.py
+â"‚       â"‚   â"œâ"€â"€ base_provider.py (abstract base)
+â"‚       â"‚   â"œâ"€â"€ openai_provider.py (if exists)
+â"‚       â"‚   â"œâ"€â"€ anthropic_provider.py (if exists)
+â"‚       â"‚   â""â"€â"€ ... (other providers from SOURCE)
+â"‚       â"œâ"€â"€ config.py (provider configuration)
+â"‚       â""â"€â"€ exceptions.py (AI-MCP specific errors)
+â"‚
+â""â"€â"€ tests\ (already exists from Phase 1)
+```
+
+=== STEP-BY-STEP INSTRUCTIONS ===
+
+## STEP 1: ANALYZE SOURCE CODE (15 minutes)
+
+1. **Scan SOURCE_DIR** and create an inventory:
+   ```
+   qoder analyze --directory "C:\Users\Mohamed Mansour\Desktop\QoderAgentFiles\agent_manager"
+   qoder analyze --directory "C:\Users\Mohamed Mansour\Desktop\QoderAgentFiles\engines"
+   qoder analyze --directory "C:\Users\Mohamed Mansour\Desktop\QoderAgentFiles\ai_mcp"
+   ```
+
+2. **Document what you find:**
+   - List all files in each directory
+   - Identify dependencies between files
+   - Note any external dependencies (imports)
+   - Identify common patterns or utilities
+   - Flag any deprecated or redundant code
+
+3. **Create discovery document:**
+   Save to: `_reports\qoder\phase2_discovery.json`
+   ```json
+   {
+     "agent_manager": {
+       "files": ["list of files"],
+       "dependencies": ["list of deps"],
+       "key_classes": ["list of main classes"],
+       "refactoring_notes": ["what needs to change"]
+     },
+     "engines": { ... },
+     "ai_mcp": { ... }
+   }
+   ```
+
+## STEP 2: CREATE DIRECTORY STRUCTURE (5 minutes)
+
+Create the `core_services\` skeleton:
+
+```python
+# Create directories
+core_services/
+core_services/agent_manager/
+core_services/engines/
+core_services/ai_mcp/
+core_services/ai_mcp/providers/
+```
+
+Create all `__init__.py` files with proper headers:
+```python
+# YMERA Refactoring Project
+# Phase: 2 | Agent: qoder | Created: 2024-11-30
+# [Module description]
+```
+
+## STEP 3: REFACTOR AGENT MANAGER (20 minutes)
+
+### 3.1 Create Base Structure
+
+**File: core_services/agent_manager/models.py**
+```python
+# YMERA Refactoring Project
+# Phase: 2 | Agent: qoder | Created: 2024-11-30
+# Data models for agent manager
+
+from dataclasses import dataclass
+from typing import Dict, Any, Optional
+from datetime import datetime
+
+@dataclass
+class AgentTask:
+    """Represents a task to be executed by an agent"""
+    task_id: str
+    agent_name: str
+    task_type: str
+    parameters: Dict[str, Any]
+    priority: int = 5
+    created_at: datetime = None
+    
+@dataclass
+class AgentResult:
+    """Represents the result of an agent execution"""
+    task_id: str
+    status: str  # "success", "error", "timeout"
+    result: Any
+    error: Optional[str] = None
+    metadata: Dict[str, Any] = None
+```
+
+### 3.2 Refactor Agent Manager
+
+**File: core_services/agent_manager/manager.py**
+- Extract main logic from SOURCE_DIR/agent_manager/main.py
+- Import from shared.config.environment for configuration
+- Import from shared.database.db_manager if needed
+- Remove any hardcoded paths or configs
+- Use the models.py classes
+
+**Critical Refactoring Rules:**
+1. Replace hardcoded configs with: `from shared.config.environment import load_config, get_config`
+2. Replace any DB code with: `from shared.database.db_manager import DatabaseManager`
+3. Add proper error handling using try/except
+4. Add type hints to all functions
+5. Add docstrings to all classes and methods
+
+### 3.3 Refactor Supporting Modules
+
+**File: core_services/agent_manager/agent_loader.py**
+- Extract from SOURCE_DIR/agent_manager/agent_loader.py
+- Update imports to use core_services paths
+- Clean up any legacy code
+
+**File: core_services/agent_manager/task_dispatcher.py**
+- Extract from SOURCE_DIR/agent_manager/task_dispatcher.py
+- Update imports
+- Integrate with manager.py
+
+**File: core_services/agent_manager/agent_registry.py** (NEW)
+```python
+# YMERA Refactoring Project
+# Phase: 2 | Agent: qoder | Created: 2024-11-30
+# Agent registry for tracking available agents
+
+from typing import Dict, List, Optional
+from .models import AgentTask
+
+class AgentRegistry:
+    """Centralized registry of all available agents"""
+    
+    def __init__(self):
+        self._agents: Dict[str, Any] = {}
+    
+    def register_agent(self, name: str, agent_class: Any) -> None:
+        """Register a new agent"""
+        self._agents[name] = agent_class
+    
+    def get_agent(self, name: str) -> Optional[Any]:
+        """Retrieve an agent by name"""
+        return self._agents.get(name)
+    
+    def list_agents(self) -> List[str]:
+        """List all registered agent names"""
+        return list(self._agents.keys())
+```
+
+## STEP 4: REFACTOR ENGINES (25 minutes)
+
+### 4.1 Create Base Engine
+
+**File: core_services/engines/base_engine.py**
+```python
+# YMERA Refactoring Project
+# Phase: 2 | Agent: qoder | Created: 2024-11-30
+# Abstract base class for all engines
+
+from abc import ABC, abstractmethod
+from typing import Dict, Any
+
+class BaseEngine(ABC):
+    """Base class that all engines must inherit from"""
+    
+    def __init__(self, config: Dict[str, Any] = None):
+        self.config = config or {}
+    
+    @abstractmethod
+    async def execute(self, task: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute a task and return results"""
+        pass
+    
+    @abstractmethod
+    def validate_task(self, task: Dict[str, Any]) -> bool:
+        """Validate task parameters before execution"""
+        pass
+    
+    def get_name(self) -> str:
+        """Return the engine name"""
+        return self.__class__.__name__
+```
+
+### 4.2 Refactor Individual Engines
+
+For each engine file in SOURCE_DIR/engines/:
+
+**File: core_services/engines/code_engine.py**
+- Extract from SOURCE_DIR/engines/code_engine.py
+- Make it inherit from BaseEngine
+- Update imports to use shared\ and core_services\
+- Add proper async/await if not present
+- Clean up any hardcoded values
+
+**File: core_services/engines/database_engine.py**
+- Extract from SOURCE_DIR/engines/database_engine.py
+- Inherit from BaseEngine
+- Use shared.database.db_manager for all DB operations
+- Add connection pooling support
+
+**File: core_services/engines/web_engine.py**
+- Extract from SOURCE_DIR/engines/web_engine.py
+- Inherit from BaseEngine
+- Add proper HTTP client handling
+
+**Repeat for all other engines found in SOURCE_DIR**
+
+### 4.3 Create Engine Factory
+
+**File: core_services/engines/engine_factory.py**
+```python
+# YMERA Refactoring Project
+# Phase: 2 | Agent: qoder | Created: 2024-11-30
+# Factory for creating engine instances
+
+from typing import Dict, Any, Optional
+from .base_engine import BaseEngine
+from .code_engine import CodeEngine
+from .database_engine import DatabaseEngine
+from .web_engine import WebEngine
+
+class EngineFactory:
+    """Factory for creating and managing engine instances"""
+    
+    _engines: Dict[str, type[BaseEngine]] = {
+        "code": CodeEngine,
+        "database": DatabaseEngine,
+        "web": WebEngine,
+        # Add more engines as discovered
+    }
+    
+    @classmethod
+    def create_engine(cls, engine_type: str, config: Dict[str, Any] = None) -> Optional[BaseEngine]:
+        """Create an engine instance by type"""
+        engine_class = cls._engines.get(engine_type)
+        if engine_class:
+            return engine_class(config)
+        return None
+    
+    @classmethod
+    def register_engine(cls, engine_type: str, engine_class: type[BaseEngine]) -> None:
+        """Register a new engine type"""
+        cls._engines[engine_type] = engine_class
+    
+    @classmethod
+    def list_engines(cls) -> list[str]:
+        """List all available engine types"""
+        return list(cls._engines.keys())
+```
+
+## STEP 5: REFACTOR AI-MCP (20 minutes)
+
+### 5.1 Create Base Provider
+
+**File: core_services/ai_mcp/providers/base_provider.py**
+```python
+# YMERA Refactoring Project
+# Phase: 2 | Agent: qoder | Created: 2024-11-30
+# Abstract base class for AI providers
+
+from abc import ABC, abstractmethod
+from typing import Dict, Any
+
+class BaseAIProvider(ABC):
+    """Base class for all AI providers"""
+    
+    def __init__(self, api_key: str, config: Dict[str, Any] = None):
+        self.api_key = api_key
+        self.config = config or {}
+    
+    @abstractmethod
+    async def complete(self, prompt: str, **kwargs) -> Dict[str, Any]:
+        """Get completion from AI provider"""
+        pass
+    
+    @abstractmethod
+    def validate_config(self) -> bool:
+        """Validate provider configuration"""
+        pass
+```
+
+### 5.2 Refactor MCP Client
+
+**File: core_services/ai_mcp/client.py**
+- Extract from SOURCE_DIR/ai_mcp/mcp_client.py
+- Update imports
+- Add provider factory pattern
+- Use shared.config for API keys
+
+### 5.3 Refactor Providers
+
+For each provider in SOURCE_DIR/ai_mcp/:
+
+**File: core_services/ai_mcp/providers/openai_provider.py** (if exists)
+- Inherit from BaseAIProvider
+- Implement complete() method
+- Add proper error handling
+
+**File: core_services/ai_mcp/providers/anthropic_provider.py** (if exists)
+- Inherit from BaseAIProvider
+- Implement complete() method
+
+**Repeat for all providers found**
+
+### 5.4 Create Config Module
+
+**File: core_services/ai_mcp/config.py**
+```python
+# YMERA Refactoring Project
+# Phase: 2 | Agent: qoder | Created: 2024-11-30
+# AI-MCP configuration management
+
+from shared.config.environment import get_config
+from typing import Dict, Any
+
+class MCPConfig:
+    """Configuration manager for AI-MCP"""
+    
+    @staticmethod
+    def get_provider_config(provider_name: str) -> Dict[str, Any]:
+        """Get configuration for a specific provider"""
+        return {
+            "api_key": get_config(f"{provider_name.upper()}_API_KEY"),
+            "model": get_config(f"{provider_name.upper()}_MODEL"),
+            "timeout": get_config("MCP_TIMEOUT", default=30, cast=int),
+        }
+```
+
+## STEP 6: CREATE REQUIREMENTS FILES (5 minutes)
+
+**File: core_services/requirements.txt**
+```txt
+# YMERA Refactoring Project
+# Phase: 2 | Agent: qoder | Created: 2024-11-30
+# Core services dependencies
+
+# Async support
+asyncio>=3.4.3
+aiohttp>=3.9.0
+
+# HTTP clients
+httpx>=0.25.0
+requests>=2.31.0
+
+# AI providers
+openai>=1.3.0
+anthropic>=0.7.0
+
+# Database (if needed beyond shared)
+sqlalchemy>=2.0.0
+
+# Utilities
+pydantic>=2.5.0
+python-dotenv>=1.0.0
+
+# Add any other dependencies found in SOURCE_DIR
+```
+
+**File: core_services/README.md**
+```markdown
+# Core Services
+
+Phase: 2 | Agent: qoder | Created: 2024-11-30
+
+## Overview
+Core services layer containing:
+- Agent Manager: Orchestrates agent execution
+- Engines: Specialized execution engines (code, database, web, etc.)
+- AI-MCP: AI provider integration layer
+
+## Directory Structure
+```
+core_services/
+├── agent_manager/    # Agent orchestration
+├── engines/          # Execution engines
+└── ai_mcp/          # AI provider integration
+```
+
+## Usage
+
+### Agent Manager
+```python
+from core_services.agent_manager.manager import AgentManager
+
+manager = AgentManager()
+result = await manager.execute_task(task)
+```
+
+### Engines
+```python
+from core_services.engines.engine_factory import EngineFactory
+
+engine = EngineFactory.create_engine("code")
+result = await engine.execute(task)
+```
+
+### AI-MCP
+```python
+from core_services.ai_mcp.client import MCPClient
+
+client = MCPClient()
+response = await client.complete("Your prompt here")
+```
+
+## Dependencies
+See requirements.txt for full list.
+
+## Testing
+Tests are located in tests/integration/ and tests/unit/.
+```
+
+## STEP 7: UPDATE IMPORTS AND INTEGRATION (10 minutes)
+
+### 7.1 Ensure Proper Import Paths
+
+In every refactored file, update imports:
+
+**OLD (from SOURCE_DIR):**
+```python
+from config import load_config
+from database import get_connection
+```
+
+**NEW (in TARGET_DIR):**
+```python
+from shared.config.environment import load_config, get_config
+from shared.database.db_manager import DatabaseManager
+```
+
+### 7.2 Update __init__.py Files
+
+**File: core_services/__init__.py**
+```python
+# YMERA Refactoring Project
+# Phase: 2 | Agent: qoder | Created: 2024-11-30
+# Core services package
+
+__version__ = "2.0.0"
+
+from .agent_manager.manager import AgentManager
+from .engines.engine_factory import EngineFactory
+from .ai_mcp.client import MCPClient
+
+__all__ = ["AgentManager", "EngineFactory", "MCPClient"]
+```
+
+**File: core_services/agent_manager/__init__.py**
+```python
+from .manager import AgentManager
+from .agent_registry import AgentRegistry
+from .models import AgentTask, AgentResult
+
+__all__ = ["AgentManager", "AgentRegistry", "AgentTask", "AgentResult"]
+```
+
+**File: core_services/engines/__init__.py**
+```python
+from .base_engine import BaseEngine
+from .engine_factory import EngineFactory
+from .code_engine import CodeEngine
+from .database_engine import DatabaseEngine
+from .web_engine import WebEngine
+
+__all__ = ["BaseEngine", "EngineFactory", "CodeEngine", "DatabaseEngine", "WebEngine"]
+```
+
+**File: core_services/ai_mcp/__init__.py**
+```python
+from .client import MCPClient
+from .config import MCPConfig
+
+__all__ = ["MCPClient", "MCPConfig"]
+```
+
+## STEP 8: CODE QUALITY CHECKS (10 minutes)
+
+Run these checks on all refactored code:
+
+### 8.1 Syntax Check
+```bash
+python -m py_compile core_services/**/*.py
+```
+
+### 8.2 Import Check
+```bash
+python -c "import core_services; print('✓ Imports work')"
+python -c "from core_services import AgentManager; print('✓ AgentManager imports')"
+python -c "from core_services import EngineFactory; print('✓ EngineFactory imports')"
+python -c "from core_services import MCPClient; print('✓ MCPClient imports')"
+```
+
+### 8.3 Verify Integration with shared\
+```bash
+python -c "from core_services.agent_manager.manager import AgentManager; from shared.config.environment import get_config; print('✓ Integration works')"
+```
+
+## STEP 9: CREATE COMPLETION REPORT (10 minutes)
+
+**File: _reports/qoder/phase2_qoder_YYYYMMDD_HHMMSS.md**
+
+Use this template:
+
+```markdown
+# Qoder Phase 2 Completion Report
+Phase: 2 | Agent: qoder | Created: [TIMESTAMP]
+
+## Summary
+- Created core_services/ directory structure
+- Refactored Agent Manager from SOURCE_DIR
+- Refactored [X] engines
+- Refactored AI-MCP integration
+- Total files created: [COUNT]
+- Total lines of code: ~[ESTIMATE]
+
+## Files Created
+
+### Agent Manager (core_services/agent_manager/)
+- manager.py - [brief description]
+- agent_loader.py - [brief description]
+- task_dispatcher.py - [brief description]
+- agent_registry.py - [brief description]
+- models.py - [brief description]
+
+### Engines (core_services/engines/)
+- base_engine.py - [brief description]
+- code_engine.py - [brief description]
+- database_engine.py - [brief description]
+- web_engine.py - [brief description]
+- [list all engines created]
+- engine_factory.py - [brief description]
+
+### AI-MCP (core_services/ai_mcp/)
+- client.py - [brief description]
+- config.py - [brief description]
+- providers/base_provider.py - [brief description]
+- providers/[list all providers] - [brief descriptions]
+
+## Refactoring Changes Made
+
+### From Agent Manager
+- [List specific changes made to each file]
+- [What was removed, what was consolidated]
+- [New patterns introduced]
+
+### From Engines
+- [List specific changes]
+- [How engines now inherit from BaseEngine]
+- [Integration with EngineFactory]
+
+### From AI-MCP
+- [List specific changes]
+- [Provider abstraction introduced]
+- [Configuration management]
+
+## Integration with shared\
+
+List everywhere you integrated with shared\ library:
+- agent_manager/manager.py uses shared.config.environment
+- database_engine.py uses shared.database.db_manager
+- [etc.]
+
+## Dependencies Added
+
+List all new dependencies in core_services/requirements.txt:
+- asyncio>=3.4.3 (reason)
+- aiohttp>=3.9.0 (reason)
+- [etc.]
+
+## Testing Integration
+
+How core_services integrates with test framework:
+- Tests can import from core_services
+- Integration tests in tests/integration/ ready for implementation
+- E2E tests in tests/e2e/ ready for implementation
+
+## Known Issues / TODOs
+
+List any issues discovered:
+- [ ] Some engines may need additional refactoring
+- [ ] Configuration validation needs enhancement
+- [ ] [any other issues]
+
+## For Next Phase (Phase 3)
+
+Phase 3 will involve:
+1. Qoder refactoring unified_agents/
+2. Qoder implementing actual test code
+3. Gemini creating comprehensive documentation
+
+Core services is ready for:
+- Agent integration
+- Test implementation
+- Documentation
+
+## Validation Checklist
+- [X] All directories created
+- [X] All __init__.py files present
+- [X] Imports work correctly
+- [X] Integration with shared\ verified
+- [X] requirements.txt created
+- [X] README.md created
+- [X] Code quality checks passed
+
+## Statistics
+- Directories created: [COUNT]
+- Python files created: [COUNT]
+- Total lines of code: [ESTIMATE]
+- Files refactored from SOURCE_DIR: [COUNT]
+- New files created: [COUNT]
+
+## Timestamp
+[YYYY-MM-DD HH:MM:SS]
+```
+
+=== CRITICAL REQUIREMENTS ===
+
+1. **DO NOT create from scratch** - Refactor existing code from SOURCE_DIR
+2. **USE shared\ library** - Import from shared.config and shared.database
+3. **FOLLOW patterns** - Use base classes, factories, and registries
+4. **ADD type hints** - Every function must have type hints
+5. **ADD docstrings** - Every class and method must have docstrings
+6. **PROPER error handling** - Use try/except blocks appropriately
+7. **ASYNC support** - Use async/await where appropriate
+8. **CLEAN imports** - Remove unused imports, organize logically
+9. **CONSISTENT naming** - Follow PEP 8 conventions
+10. **UPDATE __init__.py** - Export public interfaces properly
+
+=== QUALITY STANDARDS ===
+
+Every file must have:
+- âœ… Header comment with project info
+- âœ… Proper imports (stdlib, third-party, local)
+- âœ… Type hints on all functions
+- âœ… Docstrings (Google style)
+- âœ… Error handling
+- âœ… No hardcoded values
+- âœ… No TODOs or FIXMEs
+
+=== OUTPUT LOCATIONS ===
+
+All code: C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\core_services\
+Discovery report: C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\_reports\qoder\phase2_discovery.json
+Completion report: C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\_reports\qoder\phase2_qoder_YYYYMMDD_HHMMSS.md
+
+=== SUCCESS CRITERIA ===
+
+Phase 2 is complete when:
+1. core_services/ directory exists with all subdirectories
+2. All files from SOURCE_DIR are refactored and placed correctly
+3. All imports work without errors
+4. Integration with shared\ is verified
+5. requirements.txt is complete
+6. README.md documents usage
+7. Completion report is saved
+8. Code quality checks pass
+
+=== ESTIMATED TIME ===
+Total: ~2 hours
+- Analysis: 15 min
+- Directory setup: 5 min
+- Agent Manager refactoring: 20 min
+- Engines refactoring: 25 min
+- AI-MCP refactoring: 20 min
+- Requirements & docs: 5 min
+- Integration: 10 min
+- Quality checks: 10 min
+- Report: 10 min
+
+========================================
+END OF PHASE 2 - QODER PROMPT
+========================================

@@ -1,0 +1,202 @@
+# YMERA Master Test Plan
+Phase: 1 | Agent: gemini | Created: 2025-11-30 09:05:00
+
+## Overview
+This test plan covers all testing requirements for the refactored YMERA system. It is designed to ensure the stability, reliability, and performance of the new architecture by defining a multi-layered testing strategy, including unit, integration, and end-to-end tests.
+
+## 1. UNIT TESTS (tests\unit\)
+
+### 1.1 Shared Library Tests
+
+**File: test_shared_config.py**
+Location: `C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\tests\unit\test_shared_config.py`
+Test Cases:
+1.  `test_load_environment_variables()`: Verify that variables from a .env file are loaded correctly.
+2.  `test_get_config_with_defaults()`: Test that default values are returned for missing variables.
+3.  `test_get_config_type_casting()`: Ensure configuration values are cast to the correct type (e.g., int, bool).
+4.  `test_config_loader_missing_file()`: Handle a missing .env file gracefully.
+5.  `test_config_singleton_pattern()`: Verify that the config loader is a singleton and returns the same instance.
+
+**File: test_shared_db_manager.py**
+Location: `C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\tests\unit\test_shared_db_manager.py`
+Test Cases:
+1.  `test_db_manager_init_sqlite_memory()`: Verify initialization with an in-memory SQLite database.
+2.  `test_db_manager_init_sqlite_file()`: Verify initialization with a file-based SQLite database.
+3.  `test_db_manager_connection_success()`: Test successful connection and disconnection.
+4.  `test_db_manager_connection_failure()`: Mock a connection failure and verify error handling.
+5.  `test_execute_query_success()`: Test a successful SELECT query.
+6.  `test_execute_insert_success()`: Test a successful INSERT query.
+7.  `test_execute_update_success()`: Test a successful UPDATE query.
+8.  `test_execute_delete_success()`: Test a successful DELETE query.
+9.  `test_sql_injection_prevention()`: Verify that parameterized queries prevent SQL injection.
+10. `test_get_db_manager_singleton()`: Ensure the database manager is a singleton.
+
+### 1.2 Core Services Tests
+
+**File: test_agent_manager.py**
+Location: `C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\tests\unit\test_agent_manager.py`
+Test Cases:
+1.  `test_agent_manager_init()`: Test initialization of the Agent Manager.
+2.  `test_register_agent_success()`: Test successful registration of a new agent.
+3.  `test_register_agent_duplicate()`: Test handling of a duplicate agent registration.
+4.  `test_lookup_agent_found()`: Test finding an existing agent.
+5.  `test_lookup_agent_not_found()`: Test handling for a non-existent agent.
+6.  `test_dispatch_task_to_agent()`: Test dispatching a task to a registered agent.
+7.  `test_dispatch_task_agent_unavailable()`: Test error handling when an agent is not available.
+
+**File: test_engines.py**
+Location: `C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\tests\unit\test_engines.py`
+Test Cases:
+1.  `test_code_engine_initialization()`: Test the initialization of the Code Engine.
+2.  `test_code_engine_process_request_success()`: Test a successful code generation request.
+3.  `test_code_engine_process_request_with_dependencies()`: Test code generation with dependencies.
+4.  `test_db_engine_process_query_success()`: Test a successful database query request.
+5.  `test_db_engine_invalid_query()`: Test handling of an invalid or malformed query.
+
+## 2. INTEGRATION TESTS (tests\integration\)
+
+### 2.1 Agent Manager â†” Engines
+
+**File: test_agent_engine_integration.py**
+Location: `C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\tests\integration\test_agent_engine_integration.py`
+
+**Scenario 1: Code Generation Request**
+*   **Steps**:
+    1.  Start Agent Manager service.
+    2.  Start Code Engine service.
+    3.  Agent Manager receives an API request to execute a coding agent.
+    4.  Agent Manager dispatches the task to the Code Engine.
+    5.  Code Engine processes the request and generates code.
+    6.  Agent Manager receives the result and validates it.
+*   **Expected Result**:
+    -   Successful communication between services (e.g., HTTP 200).
+    -   Valid code artifact returned.
+    -   Metrics for the transaction are recorded.
+
+**Scenario 2: Database Query Request**
+*   **Steps**:
+    1.  Start Agent Manager and Database Engine.
+    2.  Agent Manager receives a request for a database operation.
+    3.  Task is dispatched to the Database Engine.
+    4.  Database Engine executes the query via the `shared/db_manager`.
+    5.  Verify the operation completes and data integrity is maintained.
+*   **Expected Result**:
+    -   Correct data is returned or modified in the database.
+    -   Proper error handling for invalid queries.
+
+### 2.2 AI-MCP Integration
+
+**File: test_ai_mcp_integration.py**
+Location: `C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\tests\integration\test_ai_mcp_integration.py`
+
+**Scenario: External AI API Call**
+*   **Steps**:
+    1.  Start the AI-MCP service.
+    2.  A core service (e.g., Code Engine) sends a request to the AI-MCP to get a completion from an external AI model.
+    3.  Mock the external API response to simulate success.
+    4.  Verify the AI-MCP correctly processes and forwards the response.
+    5.  Mock an external API to test rate limiting; verify AI-MCP handles a 429 error.
+    6.  Mock an external API to test error recovery; verify AI-MCP retries or fails gracefully.
+*   **Expected Result**:
+    -   Successful wrapping and forwarding of AI model requests/responses.
+    -   Robust handling of external API errors and rate limits.
+
+## 3. END-TO-END TESTS (tests\e2e\)
+
+### 3.1 Complete User Workflow
+
+**File: test_e2e_code_generation.py**
+Location: `C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\tests\e2e\test_e2e_code_generation.py`
+
+**Scenario: User requests code via API Gateway**
+*   **Full Flow**:
+    1.  A client sends a `POST` request to `/api/v1/agents/execute` with `{"agent": "coding_agent", "task": "generate a fastapi endpoint"}`.
+    2.  The API Gateway validates and forwards the request to the Agent Manager.
+    3.  Agent Manager identifies the `coding_agent` and dispatches the task.
+    4.  The appropriate Engine (Code Engine) processes the request.
+    5.  The Code Engine may call the AI-MCP for an AI completion.
+    6.  The successful response flows back through the stack to the user.
+*   **Expected Results**:
+    -   End-to-end latency is within performance targets (e.g., P95 < 3000ms).
+    -   The client receives an HTTP 200 status code.
+    -   The response body contains a valid Python code string.
+    -   Logs for the entire transaction are correctly recorded at each service level.
+
+**Scenario: Full Error Handling Workflow**
+*   **Test Cases**:
+    -   Send an invalid request body to the API Gateway; expect a 4xx error.
+    -   Shut down the `Code Engine` service and send a valid request; expect a graceful failure message (e.g., 503 Service Unavailable).
+    -   Configure the AI-MCP to time out; verify the entire workflow times out cleanly.
+    -   Attempt a database operation with the DB offline; verify proper error propagation.
+
+## 4. PERFORMANCE TESTS
+A separate performance benchmarking plan will be required, but this plan identifies the key areas to target.
+-   **API Throughput**: Measure requests per second for the `/api/v1/agents/execute` endpoint.
+-   **Agent Task Latency**: Measure the P95 latency for common agent tasks (e.g., code generation, data query).
+-   **Resource Usage**: Monitor CPU and Memory usage of all core services under load.
+
+## 5. TEST DATA & FIXTURES
+The following fixtures will need to be created by Copilot in Phase 1 to support the tests.
+
+**Location**: `C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\tests\fixtures\`
+
+**File: mock_config.json**
+```json
+{
+  "api_port": 8000,
+  "db_path": ":memory:",
+  "log_level": "DEBUG",
+  "log_file": "test.log",
+  "agent_manager_url": "http://127.0.0.1:8001"
+}
+```
+
+**File: mock_agent_request.json**
+```json
+{
+  "agent": "coding_agent",
+  "task": "generate a simple flask route",
+  "context": {
+    "language": "python",
+    "dependencies": ["flask"]
+  }
+}
+```
+
+**File: mock_ai_mcp_success_response.json**
+```json
+{
+  "provider": "mock_provider",
+  "model": "mock_model_v1",
+  "completion": "from flask import Flask\n\napp = Flask(__name__)\n\n@app.route('/')\ndef hello_world():\n    return 'Hello, World!'",
+  "usage": {
+    "prompt_tokens": 15,
+    "completion_tokens": 25,
+    "total_tokens": 40
+  }
+}
+```
+
+## 6. TEST EXECUTION ORDER
+1.  **Unit tests**: Run first. They are fast, have no external dependencies, and verify the correctness of individual components.
+2.  **Integration tests**: Run after unit tests pass. These require starting isolated services (e.g., using docker-compose) to test interactions.
+3.  **E2E tests**: Run after integration tests pass. These require the full system to be deployed and running in a test-like environment.
+4.  **Performance tests**: Run last, after all functional tests pass, to benchmark the system under load.
+
+## 7. SUCCESS CRITERIA
+- **Phase 1 (Foundation)**: All unit tests for the `shared` library must pass with 100% code coverage.
+- **Phase 2 (Core Services)**: All unit tests for core services must pass.
+- **Phase 3 (Integration)**: 95%+ of integration tests must pass.
+- **Phase 4 (E2E Validation)**: 90%+ of E2E tests must pass, with all critical path workflows passing 100%.
+
+## 8. DEPENDENCIES FOR COPILOT
+Copilot is responsible for creating the test framework and scaffolding in Phase 1. It will require:
+1.  This `master_test_plan.md` as the source of truth.
+2.  Qoder's phase 1 report (`phase1_qoder_*.md`) to understand the `shared` library structure.
+3.  Write access to the `TARGET_DIR` to create the `tests\` directory and its sub-directories and files.
+
+**Priority order for Copilot:**
+1.  Create the directory structure: `tests/unit`, `tests/integration`, `tests/e2e`, `tests/fixtures`.
+2.  Implement all test fixtures defined in section 5.
+3.  Create placeholder test files (e.g., `test_shared_config.py`) with empty test functions as defined in this plan.
+4.  Set up the `pytest.ini` configuration file and a `run_tests.bat`/`run_tests.py` script.

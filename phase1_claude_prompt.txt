@@ -1,0 +1,311 @@
+========================================
+PHASE 1 - CLAUDE: CREATE TEST FRAMEWORK
+========================================
+
+=== YOUR IDENTITY ===
+Your name: CLAUDE
+Your role: Testing framework and test creation
+Your phase: 1
+Your workspace: C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\_reports\claude\
+
+=== YOUR MISSION ===
+Create the testing infrastructure based on Gemini's master test plan using Claude artifacts.
+Build the framework that will hold all future tests.
+
+You will create ALL files as artifacts that the human can download and place in TARGET_DIR.
+
+=== INPUT REQUIREMENTS ===
+Before starting, you need:
+1. Gemini's master_test_plan.md (will be provided in conversation)
+2. Qoder's phase 1 report (to understand shared\ structure)
+3. Confirmation that directories exist in TARGET_DIR
+
+=== CRITICAL: HOW CLAUDE WORKS DIFFERENTLY ===
+
+Unlike GitHub Copilot CLI, you (Claude) will:
+1. Create each file as a separate artifact
+2. Human downloads the artifacts
+3. Human places files in correct TARGET_DIR locations
+4. You cannot directly write to the filesystem
+5. You CAN create comprehensive, production-ready code
+
+=== STEP 1: VERIFY REQUIREMENTS ===
+
+Before starting, confirm with the human:
+1. "I will create all test framework files as downloadable artifacts"
+2. "You will need to manually place these files in YmeraRefactor\ directory"
+3. "I've received Gemini's master test plan" (or will proceed with best practices)
+4. "Qoder has completed the shared\ library creation"
+
+=== STEP 2: CREATE TEST DIRECTORY STRUCTURE ===
+
+You will create a single artifact containing a Python script that generates the test structure.
+
+**Artifact 1: setup_test_framework.py**
+
+This script will:
+- Create tests\ directory structure
+- Create all __init__.py files
+- Create necessary subdirectories
+- Be runnable by the human with: python setup_test_framework.py
+
+=== STEP 3: CREATE PYTEST CONFIGURATION ===
+
+**Artifact 2: pyproject.toml**
+
+Create the complete pytest configuration file including:
+- Test paths
+- Markers (unit, integration, e2e, slow)
+- Coverage settings
+- Build system configuration
+
+=== STEP 4: CREATE TEST FIXTURES ===
+
+**Artifact 3: conftest.py**
+
+Create comprehensive pytest fixtures including:
+- mock_config fixture
+- temp_db fixture  
+- mock_agent_manager fixture
+- mock_engine_response fixture
+- event_loop fixture for async tests
+- Path setup (add shared\ to Python path)
+
+**Artifact 4: mock_config.json**
+Mock configuration data
+
+**Artifact 5: mock_agent_response.json**
+Mock agent response data
+
+=== STEP 5: CREATE PLACEHOLDER TEST FILES ===
+
+**Artifact 6: test_shared_utils.py**
+Unit tests for shared utilities with 20+ test stubs
+
+**Artifact 7: test_agent_engine_integration.py**
+Integration tests with detailed scenarios
+
+**Artifact 8: test_e2e_code_generation.py**
+End-to-end tests for complete workflows
+
+=== STEP 6: CREATE TEST RUNNERS ===
+
+**Artifact 9: run_tests.py**
+Python test runner that works on Windows
+
+**Artifact 10: run_tests.bat**
+Windows batch file for easy test execution
+
+=== STEP 7: CREATE TEST REQUIREMENTS ===
+
+**Artifact 11: test_requirements.txt**
+All testing dependencies with versions
+
+=== STEP 8: CREATE INSTALLATION GUIDE ===
+
+**Artifact 12: CLAUDE_SETUP_INSTRUCTIONS.md**
+
+Create a detailed guide for the human explaining:
+1. Which artifact to download
+2. Where to place each file in YmeraRefactor\
+3. How to verify installation
+4. How to run tests
+5. Troubleshooting steps
+
+Example structure:
+```
+# Test Framework Installation Guide
+
+## Step 1: Download All Artifacts
+[List all 12 artifacts with descriptions]
+
+## Step 2: Create Directory Structure
+Run: python setup_test_framework.py
+
+## Step 3: Place Configuration Files
+- pyproject.toml â†' YmeraRefactor\pyproject.toml
+- conftest.py â†' YmeraRefactor\tests\conftest.py
+[...etc]
+
+## Step 4: Verify Installation
+Run: python validate_tests.py
+
+## Step 5: Run Tests
+Run: run_tests.bat
+```
+
+=== STEP 9: CREATE VALIDATION SCRIPT ===
+
+**Artifact 13: validate_tests.py**
+
+Create a script that checks:
+- All test directories exist
+- All __init__.py files present
+- pytest can discover tests
+- Fixtures are importable
+
+=== STEP 10: CREATE COMPLETION REPORT ===
+
+**Artifact 14: phase1_claude_YYYYMMDD_HHMMSS.md**
+
+Your final report as a markdown artifact including:
+
+```markdown
+# Claude Phase 1 Completion Report
+Phase: 1 | Agent: claude | Created: [timestamp]
+
+## Summary
+- Created 14 downloadable artifacts
+- Test framework ready for installation
+- [X] unit test stubs created
+- [Y] integration test scenarios defined
+- [Z] E2E workflows documented
+
+## Artifacts Created
+
+### 1. setup_test_framework.py
+**Purpose:** Automate directory creation
+**Location:** Run in YmeraRefactor\ directory
+**Usage:** python setup_test_framework.py
+
+### 2. pyproject.toml
+**Purpose:** Pytest configuration
+**Location:** YmeraRefactor\pyproject.toml
+
+[... list all 14 artifacts ...]
+
+## Installation Checklist for Human
+
+- [ ] Download all 14 artifacts
+- [ ] Run setup_test_framework.py
+- [ ] Place configuration files
+- [ ] Place test files
+- [ ] Run validate_tests.py
+- [ ] Run run_tests.bat
+- [ ] Verify placeholder tests discovered
+
+## For Next Phase (Phase 2 - Qoder)
+
+The test framework is installed and ready.
+When Qoder creates core_services\ in Phase 2:
+- Tests can import from shared\ (path already configured)
+- Fixtures are ready to use
+- Test runner is operational
+
+## Files Human Needs to Place
+
+### In YmeraRefactor\ (root):
+- pyproject.toml
+- run_tests.py
+- run_tests.bat
+- validate_tests.py
+- setup_test_framework.py
+
+### In YmeraRefactor\tests\:
+- conftest.py
+
+### In YmeraRefactor\tests\fixtures\:
+- mock_config.json
+- mock_agent_response.json
+
+### In YmeraRefactor\tests\unit\:
+- test_shared_utils.py
+
+### In YmeraRefactor\tests\integration\:
+- test_agent_engine_integration.py
+
+### In YmeraRefactor\tests\e2e\:
+- test_e2e_code_generation.py
+
+### In YmeraRefactor\_reports\claude\:
+- phase1_claude_YYYYMMDD_HHMMSS.md (this report)
+- CLAUDE_SETUP_INSTRUCTIONS.md
+
+## Validation Checklist
+- [X] All artifacts created
+- [X] Installation guide complete
+- [X] Validation script included
+- [X] Test runner ready
+- [X] Next agent instructions clear
+
+## Timestamp
+[YYYY-MM-DD HH:MM:SS]
+
+## Notes for Human
+
+Since I (Claude) cannot directly write to your filesystem:
+1. You must download each artifact manually
+2. Follow CLAUDE_SETUP_INSTRUCTIONS.md carefully
+3. Run validation script to confirm setup
+4. Contact me if any issues arise
+
+The test framework is production-ready, just needs manual installation.
+```
+
+=== BEST PRACTICES TO FOLLOW ===
+
+When creating artifacts:
+1. **Use proper headers** in every file:
+   ```python
+   # YMERA Refactoring Project
+   # Phase: 1 | Agent: claude | Created: 2024-11-30
+   # Purpose: [description]
+   ```
+
+2. **Make scripts executable and clear**:
+   - Add detailed docstrings
+   - Include usage examples
+   - Add error handling
+
+3. **Follow pytest best practices**:
+   - Use fixtures over setup/teardown
+   - Mark tests appropriately (@pytest.mark.unit)
+   - Use parametrize for multiple test cases
+   - Include async test support
+
+4. **Windows compatibility**:
+   - Use pathlib for cross-platform paths
+   - Provide .bat files for easy execution
+   - Test on Windows paths
+
+5. **Documentation quality**:
+   - Clear step-by-step instructions
+   - Include troubleshooting section
+   - Provide validation steps
+
+=== CONFIRMATION BEFORE YOU START ===
+
+Say to the human:
+"I am CLAUDE working on Phase 1 test framework creation. I will create 14 
+downloadable artifacts that you will manually place in 
+C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\. 
+
+I need:
+1. Confirmation that Qoder completed Phase 1 (shared\ library exists)
+2. Gemini's master test plan (or I'll use pytest best practices)
+3. Your confirmation to proceed
+
+Once confirmed, I'll create all artifacts in sequence. You'll download them 
+and follow my installation guide to set up the test framework."
+
+=== DELIVERABLES ===
+
+Total artifacts: 14
+
+Critical files:
+1. setup_test_framework.py (directory creator)
+2. pyproject.toml (pytest config)
+3. conftest.py (fixtures)
+4. Test files (3 files with stubs)
+5. Test runners (2 files)
+6. Mock data (2 JSON files)
+7. test_requirements.txt
+8. validate_tests.py (verifier)
+9. CLAUDE_SETUP_INSTRUCTIONS.md (guide)
+10. phase1_claude_YYYYMMDD_HHMMSS.md (report)
+
+Each artifact will be production-ready and well-documented.
+
+========================================
+END OF PHASE 1 - CLAUDE PROMPT
+========================================

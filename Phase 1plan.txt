@@ -1,0 +1,312 @@
+PHASE 1 - GEMINI: CREATE MASTER TEST PLAN
+========================================
+
+=== YOUR IDENTITY ===
+Your name: GEMINI
+Your role: Documentation and test planning
+Your phase: 1
+Your workspace: C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\_reports\gemini\
+
+=== YOUR MISSION ===
+Analyze the SOURCE_DIR codebase and create a comprehensive test plan
+that covers unit tests, integration tests, and end-to-end tests.
+
+=== INPUT REQUIREMENTS ===
+Before starting, you need:
+1. The PHASE0_AGENT_INVENTORY.json (provided in conversation)
+2. Access to SOURCE_DIR (read-only) to review documentation
+
+=== STEP 1: ANALYZE DOCUMENTATION ===
+
+Task: Read existing documentation in SOURCE_DIR
+
+Actions:
+1. Scan for all .md files in SOURCE_DIR:
+   - agents\README.md
+   - agents\agent_manager\README.md
+   - agents\engines\README.md
+   - agents\ai-mcp-system\README.md
+   - Any ARCHITECTURE.md, INTEGRATION.md files
+
+2. Extract key information:
+   - What agents exist
+   - How agents interact
+   - What APIs are exposed
+   - What workflows exist
+
+3. Save notes to:
+   C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\_reports\gemini\phase1_doc_analysis.md
+
+Format:
+# Documentation Analysis
+Phase: 1 | Agent: gemini | Created: [timestamp]
+
+## Key Findings
+- Total agents: 70+
+- Agent families: 12
+- Core services: Agent Manager, Engines, AI-MCP
+- API endpoints: [list key endpoints]
+- User workflows: [list critical workflows]
+
+## Critical Components Requiring Tests
+1. Agent Manager - orchestration logic
+2. Engines - processing logic
+3. AI-MCP - external API integration
+4. Database operations
+5. API Gateway
+
+=== STEP 2: CREATE MASTER TEST PLAN ===
+
+Task: Write comprehensive test plan
+
+Save to: C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\_reports\gemini\master_test_plan.md
+
+Use this structure:
+# YMERA Master Test Plan
+Phase: 1 | Agent: gemini | Created: [timestamp]
+
+## Overview
+This test plan covers all testing requirements for the refactored YMERA system.
+
+## 1. UNIT TESTS (tests\unit\)
+
+### 1.1 Shared Library Tests
+
+**File: test_shared_utils.py**
+Location: TARGET_DIR\tests\unit\test_shared_utils.py
+
+Test Cases:
+1. test_logger_initialization()
+   - Verify logger creates correctly
+   - Check log file is created
+   - Test different log levels
+
+2. test_logger_file_output()
+   - Verify messages write to file
+   - Check log rotation works
+   - Test concurrent logging
+
+3. test_config_loader_valid_json()
+   - Load valid configuration
+   - Verify all keys present
+   - Check data types correct
+
+4. test_config_loader_missing_file()
+   - Handle missing config file
+   - Verify default values used
+   - Check error message
+
+[... 20+ more test cases for shared utilities ...]
+
+### 1.2 Core Services Tests
+
+**File: test_agent_manager.py**
+Location: TARGET_DIR\tests\unit\test_agent_manager.py
+
+Test Cases:
+1. test_agent_manager_init()
+2. test_agent_registration()
+3. test_agent_lookup()
+[... more test cases ...]
+
+**File: test_engines.py**
+Location: TARGET_DIR\tests\unit\test_engines.py
+
+Test Cases:
+1. test_engine_initialization()
+2. test_engine_process_request()
+[... more test cases ...]
+
+## 2. INTEGRATION TESTS (tests\integration\)
+
+### 2.1 Agent Manager â†” Engines
+
+**File: test_agent_engine_integration.py**
+Location: TARGET_DIR\tests\integration\test_agent_engine_integration.py
+
+**Scenario 1: Code Generation Request**
+Steps:
+1. Start Agent Manager service
+2. Start Code Engine service
+3. Agent Manager sends request to Code Engine
+4. Code Engine processes and returns result
+5. Agent Manager receives and validates result
+
+Expected Result:
+- HTTP 200 response
+- Valid code in response
+- Proper error handling
+
+**Scenario 2: Database Query**
+Steps:
+1. Start Agent Manager
+2. Start Database Engine
+3. Request database operation
+4. Verify operation completes
+5. Verify data integrity
+
+[... 10+ integration scenarios ...]
+
+### 2.2 AI-MCP Integration
+
+**File: test_ai_mcp_integration.py**
+
+**Scenario: External AI API Call**
+Steps:
+1. Start AI-MCP service
+2. Send request to AI model
+3. Mock external API response
+4. Verify response handling
+5. Test rate limiting
+6. Test error recovery
+
+## 3. END-TO-END TESTS (tests\e2e\)
+
+### 3.1 Complete User Workflow
+
+**File: test_e2e_code_generation.py**
+Location: TARGET_DIR\tests\e2e\test_e2e_code_generation.py
+
+**Scenario: User requests code via API Gateway**
+
+Full Flow:
+1. User â†’ API Gateway: POST /api/v1/agents/execute
+   Body: {"agent": "coding_agent", "task": "generate hello world"}
+
+2. API Gateway â†’ Agent Manager: Forward request
+
+3. Agent Manager â†’ Coding Agent: Instantiate agent
+
+4. Coding Agent â†’ Code Engine: Process request
+
+5. Code Engine â†’ AI-MCP: Get AI completion (if needed)
+
+6. Response flows back through stack
+
+7. User receives: Generated code + metadata
+
+Expected Results:
+- Total time < 5 seconds
+- HTTP 200 status
+- Valid Python code in response
+- Proper logging at each step
+- No memory leaks
+
+**Scenario: Error Handling**
+Test various failure modes:
+- Invalid request format
+- Engine unavailable
+- AI-MCP timeout
+- Database connection lost
+
+[... 15+ E2E scenarios covering all major workflows ...]
+
+## 4. PERFORMANCE TESTS
+
+See separate: Performance Benchmarking Plan document
+
+Key metrics:
+- Throughput: [X] requests per second
+- Latency: P95 < [Y] ms
+- Resource usage: CPU < 80%, Memory < 4GB
+
+## 5. TEST DATA & FIXTURES
+
+Required fixtures (for Copilot to create):
+
+**File: tests\fixtures\mock_config.json**
+{
+  "api_port": 8000,
+  "db_path": ":memory:",
+  "log_level": "DEBUG"
+}
+
+**File: tests\fixtures\mock_agent_response.json**
+{
+  "agent": "coding_agent",
+  "status": "success",
+  "result": "print('Hello World')"
+}
+
+[... list all required test fixtures ...]
+
+## 6. TEST EXECUTION ORDER
+
+1. Unit tests (fast, no dependencies)
+2. Integration tests (require services running)
+3. E2E tests (full system running)
+4. Performance tests (last, after all functional tests pass)
+
+## 7. SUCCESS CRITERIA
+
+Phase 1: Shared library tests - 100% pass
+Phase 2: Core services tests - 100% pass
+Phase 3: Integration tests - 95%+ pass
+Phase 4: E2E tests - 90%+ pass
+
+## 8. DEPENDENCIES FOR COPILOT
+
+Copilot (test framework creator) needs:
+1. This master test plan
+2. Qoder's phase 1 report (to understand shared\ structure)
+3. Access to TARGET_DIR to create tests\ structure
+
+Priority order:
+1. Create test framework structure
+2. Implement test fixtures
+3. Create placeholder test files
+4. (Tests will be filled in during Phase 3)
+
+=== STEP 3: CREATE COMPLETION REPORT ===
+
+Save to: C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\_reports\gemini\phase1_gemini_YYYYMMDD_HHMMSS.md
+
+Template:
+# Gemini Phase 1 Completion Report
+Phase: 1 | Agent: gemini | Created: [timestamp]
+
+## Summary
+- Analyzed SOURCE_DIR documentation
+- Analyzed PHASE0_AGENT_INVENTORY.json
+- Created comprehensive master test plan
+- Identified [X] unit test cases
+- Identified [Y] integration test scenarios
+- Identified [Z] E2E workflows
+
+## Files Created
+- C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\_reports\gemini\phase1_doc_analysis.md
+- C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\_reports\gemini\master_test_plan.md
+- C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\_reports\gemini\phase1_gemini_YYYYMMDD_HHMMSS.md
+
+## Files Modified
+None
+
+## For Next Agent (Copilot - Phase 1)
+Copilot needs to:
+1. Read master_test_plan.md
+2. Create tests\ directory structure
+3. Create test fixtures
+4. Create placeholder test files
+5. Set up pytest configuration
+
+Files Copilot should read:
+- C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\_reports\gemini\master_test_plan.md
+- C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\_reports\qoder\phase1_qoder_*.md (to understand shared\ structure)
+
+## Validation Checklist
+- [X] Master test plan is comprehensive
+- [X] All major workflows covered
+- [X] Test fixtures identified
+- [X] Files saved to correct location
+- [X] This report saved to: C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\_reports\gemini\phase1_gemini_YYYYMMDD_HHMMSS.md
+
+## Timestamp
+[YYYY-MM-DD HH:MM:SS]
+
+=== CONFIRMATION BEFORE YOU START ===
+Please confirm:
+"I am GEMINI working on Phase 1. I will create the master test plan by 
+analyzing SOURCE_DIR (read-only) and will save all outputs to 
+C:\Users\Mohamed Mansour\Desktop\YmeraRefactor\_reports\gemini\."
+
+Then proceed with the steps above.

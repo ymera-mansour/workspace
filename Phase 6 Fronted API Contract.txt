@@ -1,0 +1,715 @@
+# API Contract: Frontend â†” Backend Integration
+Phase: 6 | Agent: gemini | Created: 2024-11-30
+
+## Overview
+This document defines the contract between the React frontend and the new FastAPI backend.
+
+---
+
+## Base URLs
+
+### Development
+```
+Frontend: http://localhost:3000
+Backend API: http://localhost:8000
+WebSocket: ws://localhost:8000
+```
+
+### Production
+```
+Frontend: https://ymera-app.com
+Backend API: https://api.ymera-app.com
+WebSocket: wss://api.ymera-app.com
+```
+
+---
+
+## Authentication
+
+### Login Flow
+```
+1. User enters credentials on /login
+2. POST /api/v1/auth/login
+3. Receive JWT tokens
+4. Store tokens in memory (not localStorage for security)
+5. Add Bearer token to all subsequent requests
+6. Refresh token before expiry
+```
+
+### Auth Headers
+```javascript
+headers: {
+  'Authorization': `Bearer ${accessToken}`,
+  'Content-Type': 'application/json'
+}
+```
+
+### Token Refresh
+```
+Access Token: 30 minutes
+Refresh Token: 7 days
+
+Before access token expires:
+POST /api/v1/auth/refresh
+Body: { "refresh_token": "..." }
+Response: { "access_token": "...", "refresh_token": "..." }
+```
+
+---
+
+## API Endpoints
+
+### Authentication Endpoints
+
+#### POST /api/v1/auth/register
+**Purpose**: Register new user
+
+**Request**:
+```json
+{
+  "username": "string",
+  "email": "string",
+  "password": "string"
+}
+```
+
+**Response** (201):
+```json
+{
+  "user_id": 1,
+  "username": "string",
+  "email": "string"
+}
+```
+
+**Errors**:
+- 400: Username/email already exists
+- 422: Validation error
+
+---
+
+#### POST /api/v1/auth/login
+**Purpose**: Login and get tokens
+
+**Request**:
+```json
+{
+  "username": "string",
+  "password": "string"
+}
+```
+
+**Response** (200):
+```json
+{
+  "access_token": "eyJ...",
+  "refresh_token": "eyJ...",
+  "token_type": "bearer"
+}
+```
+
+**Errors**:
+- 401: Invalid credentials
+
+---
+
+### Agent Endpoints
+
+#### GET /api/v1/agents/
+**Purpose**: List all available agents
+
+**Auth**: Required
+
+**Response** (200):
+```json
+{
+  "success": true,
+  "agents": [
+    {
+      "name": "coding_agent",
+      "version": "2.0.0",
+      "description": "Code generation and analysis",
+      "capabilities": ["code_generation", "refactoring"],
+      "status": "initialized"
+    }
+  ],
+  "total": 5
+}
+```
+
+---
+
+#### POST /api/v1/agents/execute
+**Purpose**: Execute an agent synchronously
+
+**Auth**: Required
+
+**Request**:
+```json
+{
+  "agent_name": "coding_agent",
+  "task_id": "optional-custom-id",
+  "task_type": "code_generation",
+  "parameters": {
+    "language": "python",
+    "prompt": "Create a FastAPI endpoint"
+  }
+}
+```
+
+**Response** (200):
+```json
+{
+  "success": true,
+  "task_id": "task_123",
+  "status": "success",
+  "result": {
+    "code": "from fastapi import FastAPI...",
+    "language": "python",
+    "metadata": {}
+  },
+  "error": null,
+  "metadata": {
+    "execution_time": 2.5,
+    "agent": "coding_agent"
+  }
+}
+```
+
+**Errors**:
+- 404: Agent not found
+- 422: Invalid parameters
+- 500: Execution failed
+
+---
+
+#### POST /api/v1/agents/execute/async
+**Purpose**: Execute an agent asynchronously (long-running tasks)
+
+**Auth**: Required
+
+**Request**: Same as synchronous execution
+
+**Response** (202):
+```json
+{
+  "success": true,
+  "task_id": "celery-task-uuid",
+  "message": "Task queued successfully",
+  "status_url": "/api/v1/agents/status/celery-task-uuid"
+}
+```
+
+---
+
+#### GET /api/v1/agents/status/{task_id}
+**Purpose**: Get status of async task
+
+**Auth**: Required
+
+**Response** (200):
+```json
+{
+  "task_id": "celery-task-uuid",
+  "status": "PENDING|SUCCESS|FAILURE",
+  "result": {...},  // If SUCCESS
+  "error": "..."    // If FAILURE
+}
+```
+
+---
+
+### Health Check Endpoints
+
+#### GET /api/v1/health
+**Purpose**: Basic health check
+
+**Auth**: Not required
+
+**Response** (200):
+```json
+{
+  "status": "healthy",
+  "version": "2.0.0",
+  "environment": "production",
+  "timestamp": 1234567890.123
+}
+```
+
+---
+
+#### GET /api/v1/health/detailed
+**Purpose**: Detailed health check
+
+**Auth**: Required (admin only)
+
+**Response** (200):
+```json
+{
+  "status": "healthy|degraded",
+  "services": {
+    "api": "healthy",
+    "database": "healthy",
+    "redis": "healthy",
+    "celery": "healthy"
+  },
+  "version": "2.0.0",
+  "timestamp": 1234567890.123
+}
+```
+
+---
+
+## WebSocket Endpoints
+
+### WS /ws/agent-updates/{client_id}
+**Purpose**: Real-time agent execution updates
+
+**Connection**:
+```javascript
+const ws = new WebSocket(`ws://localhost:8000/ws/agent-updates/${clientId}`);
+
+ws.onmessage = (event) => {
+  const update = JSON.parse(event.data);
+  // Handle update
+};
+```
+
+**Message Format**:
+```json
+{
+  "type": "agent_started|agent_progress|agent_completed|agent_failed",
+  "task_id": "task_123",
+  "data": {...},
+  "timestamp": 1234567890.123
+}
+```
+
+---
+
+## Error Handling
+
+### Standard Error Response
+```json
+{
+  "detail": "Error message",
+  "status_code": 400,
+  "timestamp": 1234567890.123
+}
+```
+
+### Error Codes
+- **400**: Bad Request - Invalid input
+- **401**: Unauthorized - Missing/invalid token
+- **403**: Forbidden - Insufficient permissions
+- **404**: Not Found - Resource doesn't exist
+- **422**: Validation Error - Pydantic validation failed
+- **429**: Too Many Requests - Rate limit exceeded
+- **500**: Internal Server Error - Server error
+- **503**: Service Unavailable - Service down
+
+---
+
+## Rate Limiting
+
+- **Default**: 100 requests per minute per IP
+- **Headers**:
+  ```
+  X-RateLimit-Limit: 100
+  X-RateLimit-Remaining: 95
+  X-RateLimit-Reset: 1234567890
+  ```
+- **429 Response** when exceeded
+
+---
+
+## CORS Configuration
+
+**Allowed Origins**:
+- http://localhost:3000 (development)
+- http://localhost:5173 (Vite)
+- https://ymera-app.com (production)
+
+**Allowed Methods**: GET, POST, PUT, DELETE, OPTIONS
+
+**Allowed Headers**: Authorization, Content-Type
+
+---
+
+## Data Models (TypeScript Interfaces)
+
+```typescript
+// Auth Models
+interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+interface TokenResponse {
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+}
+
+interface User {
+  user_id: number;
+  username: string;
+  email: string;
+}
+
+// Agent Models
+interface Agent {
+  name: string;
+  version: string;
+  description: string;
+  capabilities: string[];
+  status: string;
+}
+
+interface AgentExecutionRequest {
+  agent_name: string;
+  task_id?: string;
+  task_type: string;
+  parameters: Record<string, any>;
+}
+
+interface AgentExecutionResponse {
+  success: boolean;
+  task_id: string;
+  status: 'success' | 'error' | 'partial';
+  result?: any;
+  error?: string;
+  metadata?: Record<string, any>;
+}
+
+// WebSocket Models
+interface WebSocketMessage {
+  type: 'agent_started' | 'agent_progress' | 'agent_completed' | 'agent_failed';
+  task_id: string;
+  data: any;
+  timestamp: number;
+}
+```
+
+---
+
+## Frontend Implementation Guide
+
+### 1. API Client Setup
+```javascript
+// services/apiClient.js
+import { CONFIG } from "../config/config";
+
+class ApiClient {
+  constructor(baseURL) {
+    this.baseURL = baseURL;
+    this.token = null;
+  }
+
+  setToken(token) {
+    this.token = token;
+  }
+
+  async request(endpoint, options = {}) {
+    const url = `${this.baseURL}${endpoint}`;
+    const config = {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...(this.token && { Authorization: `Bearer ${this.token}` }),
+        ...options.headers,
+      },
+    };
+
+    const response = await fetch(url, config);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    return await response.json();
+  }
+
+  async login(username, password) {
+    return this.request("/api/v1/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ username, password }),
+    });
+  }
+
+  async getAgents() {
+    return this.request("/api/v1/agents/");
+  }
+
+  async executeAgent(request) {
+    return this.request("/api/v1/agents/execute", {
+      method: "POST",
+      body: JSON.stringify(request),
+    });
+  }
+
+  async executeAgentAsync(request) {
+    return this.request("/api/v1/agents/execute/async", {
+      method: "POST",
+      body: JSON.stringify(request),
+    });
+  }
+
+  async getTaskStatus(taskId) {
+    return this.request(`/api/v1/agents/status/${taskId}`);
+  }
+}
+
+export const apiClient = new ApiClient(CONFIG.API_BASE_URL);
+```
+
+### 2. Auth Service
+```javascript
+// services/authService.js
+import { apiClient } from './apiClient';
+
+export const authService = {
+  login: async (credentials) => {
+    try {
+      const response = await apiClient.login(credentials.username, credentials.password);
+      // Store tokens securely (in memory, not localStorage)
+      apiClient.setToken(response.access_token);
+      return response;
+    } catch (error) {
+      throw new Error('Invalid credentials');
+    }
+  },
+
+  logout: () => {
+    apiClient.setToken(null);
+    // Clear any stored user data
+  },
+
+  refreshToken: async (refreshToken) => {
+    // Implement token refresh logic
+  }
+};
+```
+
+### 3. Agent Service
+```javascript
+// services/agentService.js
+import { apiClient } from './apiClient';
+
+export const agentService = {
+  listAgents: () => apiClient.getAgents(),
+  
+  executeAgent: (request) => apiClient.executeAgent(request),
+  
+  executeAgentAsync: (request) => apiClient.executeAgentAsync(request),
+  
+  getTaskStatus: (taskId) => apiClient.getTaskStatus(taskId)
+};
+```
+
+### 4. WebSocket Service
+```javascript
+// services/webSocketService.js
+import { CONFIG } from "../config/config";
+
+class WebSocketService {
+  constructor(url) {
+    this.url = url;
+    this.ws = null;
+    this.subscribers = new Map();
+    this.connectionStatus = "disconnected";
+    this.statusCallbacks = new Set();
+  }
+
+  connect(token) {
+    if (this.ws?.readyState === WebSocket.OPEN) {
+      return;
+    }
+
+    this.connectionStatus = "connecting";
+    this.notifyStatusChange();
+
+    try {
+      this.ws = new WebSocket(`${this.url}?token=${token}`);
+
+      this.ws.onopen = () => {
+        this.connectionStatus = "connected";
+        this.notifyStatusChange();
+      };
+
+      this.ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          this.handleMessage(data);
+        } catch (error) {
+          console.error("WebSocket message parse error:", error);
+        }
+      };
+
+      this.ws.onclose = () => {
+        this.connectionStatus = "disconnected";
+        this.notifyStatusChange();
+      };
+    } catch (error) {
+      console.error("WebSocket connection error:", error);
+    }
+  }
+
+  subscribe(channel, callback) {
+    if (!this.subscribers.has(channel)) {
+      this.subscribers.set(channel, new Set());
+    }
+    this.subscribers.get(channel).add(callback);
+
+    return () => {
+      const channelSubscribers = this.subscribers.get(channel);
+      if (channelSubscribers) {
+        channelSubscribers.delete(callback);
+        if (channelSubscribers.size === 0) {
+          this.subscribers.delete(channel);
+        }
+      }
+    };
+  }
+
+  handleMessage(data) {
+    const { channel, payload } = data;
+    const channelSubscribers = this.subscribers.get(channel);
+    if (channelSubscribers) {
+      channelSubscribers.forEach((callback) => {
+        try {
+          callback(payload);
+        } catch (error) {
+          console.error("Subscriber callback error:", error);
+        }
+      });
+    }
+  }
+
+  disconnect() {
+    if (this.ws) {
+      this.ws.close();
+      this.ws = null;
+    }
+    this.connectionStatus = "disconnected";
+    this.notifyStatusChange();
+  }
+}
+
+export const webSocketService = new WebSocketService(CONFIG.WS_URL);
+```
+
+### 5. Updated Store Actions
+```javascript
+// store/useAppStore.js (updated actions)
+import { apiClient } from '../services/apiClient';
+import { webSocketService } from '../services/webSocketService';
+
+// ... existing store code ...
+
+// Updated complex actions
+loadData: async () => {
+  try {
+    set({ loading: true, error: null });
+    
+    // Fetch real data from API
+    const agents = await apiClient.getAgents();
+    // Fetch projects, etc.
+    
+    set({ 
+      agents: agents.data || agents, 
+      loading: false 
+    });
+  } catch (err) {
+    set({ error: err.message, loading: false });
+    console.error("Failed to load data:", err);
+  }
+},
+
+login: async (username, password) => {
+  try {
+    set({ loading: true, error: null });
+    
+    // Real login with API
+    const response = await apiClient.login(username, password);
+    
+    // Set token for future requests
+    apiClient.setToken(response.access_token);
+    
+    // Connect to WebSocket for real-time updates
+    webSocketService.connect(response.access_token);
+    
+    // Get user info
+    const user = {
+      id: response.user_id,
+      name: username,
+      // ... other user data
+    };
+    
+    set({ 
+      user, 
+      page: "dashboard", 
+      loading: false 
+    });
+    
+    // Load data after login
+    await get().loadData();
+  } catch (err) {
+    set({ error: "Invalid credentials", loading: false });
+    throw err;
+  }
+},
+
+executeAgent: async (agentRequest) => {
+  try {
+    set({ loading: true, error: null });
+    
+    const response = await apiClient.executeAgent(agentRequest);
+    
+    // Update agent status if needed
+    if (response.success) {
+      get().updateAgentStatus(response.agent_name, "completed");
+    }
+    
+    set({ loading: false });
+    return response;
+  } catch (err) {
+    set({ error: err.message, loading: false });
+    throw err;
+  }
+}
+```
+
+---
+
+## Migration Checklist
+
+### Phase 1: Update API Client
+- [ ] Update base URL to new API (`http://localhost:8000`)
+- [ ] Implement JWT token handling
+- [ ] Add request/response interceptors
+- [ ] Update error handling
+
+### Phase 2: Update Services
+- [ ] Update all API endpoint paths
+- [ ] Update request/response models
+- [ ] Add async task support
+- [ ] Implement WebSocket connection
+
+### Phase 3: Update Components
+- [ ] Update auth flow in Login component
+- [ ] Update agent execution in Agent components
+- [ ] Add loading states for async operations
+- [ ] Add real-time updates via WebSocket
+
+### Phase 4: Testing
+- [ ] Test all API endpoints
+- [ ] Test authentication flow
+- [ ] Test error handling
+- [ ] Test WebSocket connection
+
+### Phase 5: Deploy
+- [ ] Update environment variables
+- [ ] Deploy frontend
+- [ ] Verify production API connection
+- [ ] Monitor for errors
