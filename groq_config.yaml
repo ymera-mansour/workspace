@@ -1,0 +1,534 @@
+# ============================================================================
+# GROQ CONFIGURATION
+# Complete configuration for Groq multi-model optimization
+# All 6 models are 100% FREE with ultra-fast inference (<1s responses)
+# ============================================================================
+
+# ============================================================================
+# GROQ MODELS
+# All models support streaming, function calling, and are 100% FREE
+# ============================================================================
+
+groq_models:
+  llama-3.1-8b-instant:
+    endpoint: "https://api.groq.com/openai/v1/chat/completions"
+    streaming_endpoint: "https://api.groq.com/openai/v1/chat/completions"
+    rpm_limit: 30
+    rpd_limit: 14400
+    tpm_limit: 6000
+    tpd_limit: 500000
+    context_window: 32000
+    response_time: "<0.5s"
+    supports_streaming: true
+    supports_function_calling: true
+    cost: "$0 FREE"
+    best_for:
+      - fast_response
+      - real_time
+      - monitoring
+      - validation
+      - simple_tasks
+    description: "FASTEST model - Ultra-low latency for real-time applications"
+
+  llama-3.3-70b-versatile:
+    endpoint: "https://api.groq.com/openai/v1/chat/completions"
+    streaming_endpoint: "https://api.groq.com/openai/v1/chat/completions"
+    rpm_limit: 30
+    rpd_limit: 1000
+    tpm_limit: 12000
+    tpd_limit: 100000
+    context_window: 32000
+    response_time: "1-2s"
+    supports_streaming: true
+    supports_function_calling: true
+    cost: "$0 FREE"
+    best_for:
+      - general_tasks
+      - database
+      - api
+      - testing
+      - standard_agents
+    description: "Versatile model for general purpose tasks with fast inference"
+
+  llama-4-maverick-17b:
+    endpoint: "https://api.groq.com/openai/v1/chat/completions"
+    streaming_endpoint: "https://api.groq.com/openai/v1/chat/completions"
+    rpm_limit: 30
+    rpd_limit: 1000
+    tpm_limit: 6000
+    tpd_limit: 500000
+    context_window: 32000
+    response_time: "0.5-1s"
+    supports_streaming: true
+    supports_function_calling: true
+    cost: "$0 FREE"
+    best_for:
+      - balanced_performance
+      - medium_complexity
+      - documentation
+      - analysis
+    description: "Balanced speed and capability - Latest Llama 4 architecture"
+
+  qwen/qwen3-32b:
+    endpoint: "https://api.groq.com/openai/v1/chat/completions"
+    streaming_endpoint: "https://api.groq.com/openai/v1/chat/completions"
+    rpm_limit: 60
+    rpd_limit: 1000
+    tpm_limit: 6000
+    tpd_limit: 500000
+    context_window: 32000
+    response_time: "1-2s"
+    supports_streaming: true
+    supports_function_calling: true
+    cost: "$0 FREE"
+    best_for:
+      - reasoning
+      - planning
+      - analysis
+      - decision_making
+    description: "Reasoning specialist - Advanced analytical capabilities"
+
+  moonshotai/kimi-k2-instruct:
+    endpoint: "https://api.groq.com/openai/v1/chat/completions"
+    streaming_endpoint: "https://api.groq.com/openai/v1/chat/completions"
+    rpm_limit: 60
+    rpd_limit: 1000
+    tpm_limit: 10000
+    tpd_limit: 300000
+    context_window: 200000
+    response_time: "2-3s"
+    supports_streaming: true
+    supports_function_calling: true
+    cost: "$0 FREE"
+    best_for:
+      - large_context
+      - codebase_analysis
+      - long_documents
+      - comprehensive_review
+    description: "Large context specialist - 200K tokens for extensive codebases"
+
+  openai/gpt-oss-120b:
+    endpoint: "https://api.groq.com/openai/v1/chat/completions"
+    streaming_endpoint: "https://api.groq.com/openai/v1/chat/completions"
+    rpm_limit: 30
+    rpd_limit: 1000
+    tpm_limit: 8000
+    tpd_limit: 200000
+    context_window: 32000
+    response_time: "1-2s"
+    supports_streaming: true
+    supports_function_calling: true
+    cost: "$0 FREE"
+    best_for:
+      - highest_quality
+      - complex_tasks
+      - architecture
+      - security
+    description: "Highest quality model - 120B parameters for complex tasks"
+
+# ============================================================================
+# AGENT CONFIGURATIONS
+# 40+ agents with Groq model preferences
+# ============================================================================
+
+agents:
+  coding_agent:
+    preferred_models:
+      - "llama-3.3-70b-versatile"
+      - "llama-4-maverick-17b"
+    fallback_chain:
+      - "llama-3.3-70b-versatile"
+      - "llama-4-maverick-17b"
+      - "llama-3.1-8b-instant"
+    temperature: 0.7
+    max_tokens: 2048
+
+  monitoring_agent:
+    preferred_models:
+      - "llama-3.1-8b-instant"
+    fallback_chain:
+      - "llama-3.1-8b-instant"
+      - "llama-4-maverick-17b"
+    temperature: 0.3
+    max_tokens: 512
+
+  validation_agent:
+    preferred_models:
+      - "llama-3.1-8b-instant"
+    fallback_chain:
+      - "llama-3.1-8b-instant"
+      - "llama-4-maverick-17b"
+    temperature: 0.2
+    max_tokens: 1024
+
+  database_agent:
+    preferred_models:
+      - "llama-3.3-70b-versatile"
+    fallback_chain:
+      - "llama-3.3-70b-versatile"
+      - "llama-4-maverick-17b"
+    temperature: 0.5
+    max_tokens: 1536
+
+  api_agent:
+    preferred_models:
+      - "llama-3.3-70b-versatile"
+      - "llama-4-maverick-17b"
+    fallback_chain:
+      - "llama-3.3-70b-versatile"
+      - "llama-4-maverick-17b"
+      - "llama-3.1-8b-instant"
+    temperature: 0.6
+    max_tokens: 2048
+
+  testing_agent:
+    preferred_models:
+      - "llama-3.3-70b-versatile"
+    fallback_chain:
+      - "llama-3.3-70b-versatile"
+      - "llama-4-maverick-17b"
+    temperature: 0.4
+    max_tokens: 1536
+
+  documentation_agent:
+    preferred_models:
+      - "llama-4-maverick-17b"
+      - "llama-3.3-70b-versatile"
+    fallback_chain:
+      - "llama-4-maverick-17b"
+      - "llama-3.3-70b-versatile"
+    temperature: 0.7
+    max_tokens: 3072
+
+  analysis_agent:
+    preferred_models:
+      - "qwen/qwen3-32b"
+      - "llama-3.3-70b-versatile"
+    fallback_chain:
+      - "qwen/qwen3-32b"
+      - "llama-3.3-70b-versatile"
+      - "llama-4-maverick-17b"
+    temperature: 0.6
+    max_tokens: 2560
+
+  planning_agent:
+    preferred_models:
+      - "qwen/qwen3-32b"
+      - "openai/gpt-oss-120b"
+    fallback_chain:
+      - "qwen/qwen3-32b"
+      - "openai/gpt-oss-120b"
+      - "llama-3.3-70b-versatile"
+    temperature: 0.7
+    max_tokens: 3072
+
+  architecture_agent:
+    preferred_models:
+      - "openai/gpt-oss-120b"
+      - "qwen/qwen3-32b"
+    fallback_chain:
+      - "openai/gpt-oss-120b"
+      - "qwen/qwen3-32b"
+      - "llama-3.3-70b-versatile"
+    temperature: 0.7
+    max_tokens: 4096
+
+  security_agent:
+    preferred_models:
+      - "openai/gpt-oss-120b"
+    fallback_chain:
+      - "openai/gpt-oss-120b"
+      - "qwen/qwen3-32b"
+      - "llama-3.3-70b-versatile"
+    temperature: 0.4
+    max_tokens: 3072
+
+  codebase_analysis_agent:
+    preferred_models:
+      - "moonshotai/kimi-k2-instruct"
+      - "openai/gpt-oss-120b"
+    fallback_chain:
+      - "moonshotai/kimi-k2-instruct"
+      - "openai/gpt-oss-120b"
+      - "qwen/qwen3-32b"
+    temperature: 0.6
+    max_tokens: 8192
+
+  review_agent:
+    preferred_models:
+      - "llama-3.3-70b-versatile"
+      - "llama-4-maverick-17b"
+    fallback_chain:
+      - "llama-3.3-70b-versatile"
+      - "llama-4-maverick-17b"
+    temperature: 0.5
+    max_tokens: 2560
+
+  debugging_agent:
+    preferred_models:
+      - "llama-3.3-70b-versatile"
+    fallback_chain:
+      - "llama-3.3-70b-versatile"
+      - "llama-4-maverick-17b"
+    temperature: 0.5
+    max_tokens: 2048
+
+  optimization_agent:
+    preferred_models:
+      - "qwen/qwen3-32b"
+      - "llama-3.3-70b-versatile"
+    fallback_chain:
+      - "qwen/qwen3-32b"
+      - "llama-3.3-70b-versatile"
+    temperature: 0.6
+    max_tokens: 2560
+
+# ============================================================================
+# TASK-MODEL MAPPING
+# Map task types to optimal Groq models
+# ============================================================================
+
+task_model_mapping:
+  code_generation:
+    primary: "llama-3.3-70b-versatile"
+    fallback:
+      - "llama-4-maverick-17b"
+      - "llama-3.1-8b-instant"
+    complexity_routing:
+      simple: "llama-3.1-8b-instant"
+      moderate: "llama-4-maverick-17b"
+      complex: "llama-3.3-70b-versatile"
+
+  code_review:
+    primary: "llama-3.3-70b-versatile"
+    fallback:
+      - "llama-4-maverick-17b"
+
+  monitoring:
+    primary: "llama-3.1-8b-instant"
+    fallback:
+      - "llama-4-maverick-17b"
+
+  validation:
+    primary: "llama-3.1-8b-instant"
+    fallback:
+      - "llama-4-maverick-17b"
+
+  analysis:
+    primary: "qwen/qwen3-32b"
+    fallback:
+      - "llama-3.3-70b-versatile"
+      - "llama-4-maverick-17b"
+
+  planning:
+    primary: "qwen/qwen3-32b"
+    fallback:
+      - "openai/gpt-oss-120b"
+      - "llama-3.3-70b-versatile"
+
+  architecture:
+    primary: "openai/gpt-oss-120b"
+    fallback:
+      - "qwen/qwen3-32b"
+      - "llama-3.3-70b-versatile"
+
+  security:
+    primary: "openai/gpt-oss-120b"
+    fallback:
+      - "qwen/qwen3-32b"
+
+  codebase_analysis:
+    primary: "moonshotai/kimi-k2-instruct"
+    fallback:
+      - "openai/gpt-oss-120b"
+      - "qwen/qwen3-32b"
+
+  documentation:
+    primary: "llama-4-maverick-17b"
+    fallback:
+      - "llama-3.3-70b-versatile"
+
+  testing:
+    primary: "llama-3.3-70b-versatile"
+    fallback:
+      - "llama-4-maverick-17b"
+
+  debugging:
+    primary: "llama-3.3-70b-versatile"
+    fallback:
+      - "llama-4-maverick-17b"
+
+# ============================================================================
+# KEY ROTATION SETTINGS
+# Configure multi-organization API key rotation
+# ============================================================================
+
+key_rotation:
+  strategy: "least_used"  # Options: round_robin, least_used, weighted
+  
+  # Thresholds for automatic key switching
+  thresholds:
+    rpm_warning: 80  # Switch when 80% of RPM limit
+    rpd_warning: 80  # Switch when 80% of RPD limit
+    failure_threshold: 5  # Deactivate key after 5 consecutive failures
+  
+  # Environment variables for API keys
+  env_vars:
+    primary: "GROQ_API_KEY"
+    additional_keys:
+      - "GROQ_API_KEY_1"  # Organization 1
+      - "GROQ_API_KEY_2"  # Organization 2
+      - "GROQ_API_KEY_3"  # Organization 3
+      # Add more as needed
+    
+    organizations:
+      - "GROQ_ORG_1"
+      - "GROQ_ORG_2"
+      - "GROQ_ORG_3"
+  
+  # State persistence
+  state_file: "groq_api_keys_state.json"
+
+# ============================================================================
+# TRAINING SYSTEM
+# Configure agent training and learning
+# ============================================================================
+
+training:
+  # Enable/disable training
+  enabled: true
+  
+  # Training data file
+  data_file: "groq_agent_training_data.json"
+  
+  # Minimum executions before making recommendations
+  min_executions: 5
+  
+  # Scoring weights
+  scoring:
+    success_rate_weight: 0.4
+    speed_weight: 0.3
+    quality_weight: 0.3
+  
+  # Save frequency (every N executions)
+  save_frequency: 50
+  
+  # Maximum training data retention (days)
+  max_retention_days: 90
+
+# ============================================================================
+# MONITORING & ALERTING
+# Configure monitoring and alerting thresholds
+# ============================================================================
+
+monitoring:
+  # Enable/disable monitoring
+  enabled: true
+  
+  # Alert thresholds
+  alerts:
+    quota_warning: 80  # Alert at 80% quota usage
+    quota_critical: 90  # Critical alert at 90%
+    quota_emergency: 95  # Emergency alert at 95%
+    
+    latency_warning_ms: 1000  # Warn if latency > 1s
+    latency_critical_ms: 3000  # Critical if > 3s
+    
+    error_rate_warning: 0.05  # 5% error rate
+    error_rate_critical: 0.10  # 10% error rate
+  
+  # Metrics collection
+  metrics:
+    collect_latency: true
+    collect_tokens: true
+    collect_errors: true
+    collect_quality_scores: true
+  
+  # Dashboard refresh interval (seconds)
+  dashboard_refresh: 60
+
+# ============================================================================
+# OPTIMIZATION SETTINGS
+# Configure caching, rate limiting, context optimization
+# ============================================================================
+
+optimization:
+  # Caching settings
+  caching:
+    enabled: true
+    memory_cache_size_mb: 100
+    redis_enabled: false
+    redis_host: "localhost"
+    redis_port: 6379
+    redis_ttl_seconds: 3600
+    cloud_storage_enabled: false
+  
+  # Rate limiting
+  rate_limiting:
+    enabled: true
+    respect_model_limits: true
+    safety_margin: 0.9  # Use 90% of limits
+  
+  # Context optimization
+  context:
+    max_context_window: 200000  # For Kimi K2
+    safety_margin: 0.95  # Use 95% of max
+    auto_truncate: true
+    smart_file_combining: true
+
+# ============================================================================
+# FREE TIER SETTINGS
+# All Groq models are 100% FREE - these are the limits
+# ============================================================================
+
+free_tier:
+  # Individual model limits (FREE tier - no credit card)
+  models:
+    llama-3.1-8b-instant:
+      rpm: 30
+      rpd: 14400
+      tpm: 6000
+      tpd: 500000
+    
+    llama-3.3-70b-versatile:
+      rpm: 30
+      rpd: 1000
+      tpm: 12000
+      tpd: 100000
+    
+    llama-4-maverick-17b:
+      rpm: 30
+      rpd: 1000
+      tpm: 6000
+      tpd: 500000
+    
+    qwen/qwen3-32b:
+      rpm: 60
+      rpd: 1000
+      tpm: 6000
+      tpd: 500000
+    
+    moonshotai/kimi-k2-instruct:
+      rpm: 60
+      rpd: 1000
+      tpm: 10000
+      tpd: 300000
+    
+    openai/gpt-oss-120b:
+      rpm: 30
+      rpd: 1000
+      tpm: 8000
+      tpd: 200000
+  
+  # Cost
+  cost: "$0 - 100% FREE"
+  requires_credit_card: false
+  
+  # Tips for maximizing free tier
+  tips:
+    - "Use llama-3.1-8b-instant for simple/fast tasks (14.4K requests/day)"
+    - "Implement caching to reduce API calls by 60-75%"
+    - "Use multiple API keys to multiply capacity"
+    - "Route by complexity: simple→8B, moderate→70B, complex→120B"
+    - "Leverage Kimi K2 for large codebase analysis (200K context)"
+    - "Groq offers ultra-fast inference (<1s) - fastest in industry"
