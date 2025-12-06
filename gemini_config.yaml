@@ -321,9 +321,21 @@ agents:
       complex: "gemini-1.5-pro"
     supports_multimodal: true
   
-  # Additional 30+ agents can be added following the same pattern
+  # Template for additional agents (expand to 40+ as needed)
+  # Add more agents following the same pattern:
   # Examples: api_agent, microservices_agent, mobile_agent, web_agent,
-  #           ml_agent, data_engineering_agent, qa_agent, etc.
+  #           ml_agent, data_engineering_agent, qa_agent, monitoring_agent,
+  #           logging_agent, caching_agent, auth_agent, notification_agent,
+  #           email_agent, sms_agent, payment_agent, search_agent, etc.
+  # 
+  # Each agent should define:
+  # - display_name, description
+  # - task_types (list of tasks it handles)
+  # - model_preferences (simple/moderate/complex)
+  # - temperature_overrides (optional, per task type)
+  # 
+  # This configuration shows 11 example agents.
+  # The system supports unlimited agents - add yours below:
 
 # ============================================================================
 # TASK-MODEL MAPPING

@@ -7,6 +7,7 @@ import asyncio
 import os
 import json
 import random
+import uuid
 from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
@@ -235,6 +236,29 @@ class APIKeyRotationManager:
         else:
             # Reset failure count on success
             key_info.failure_count = max(0, key_info.failure_count - 1)
+        
+        # Save after every 10th request for data persistence
+        if (key_info.rpm_used + key_info.rpd_used) % 10 == 0:
+            self._save_state()
+    
+    def _save_state(self):
+        """Save key manager state to disk"""
+        try:
+            state = {
+                key_id: {
+                    "organization": info.organization,
+                    "rpm_used": info.rpm_used,
+                    "rpd_used": info.rpd_used,
+                    "last_reset": info.last_reset.isoformat(),
+                    "is_active": info.is_active,
+                    "failure_count": info.failure_count
+                }
+                for key_id, info in self.keys.items()
+            }
+            with open("api_key_state.json", "w") as f:
+                json.dump(state, f, indent=2)
+        except Exception as e:
+            logger.warning(f"Could not save key state: {e}")
     
     async def check_and_rotate_if_needed(self, key_id: str, model_id: str) -> Optional[str]:
         """Check if key needs rotation and return new key if needed"""
@@ -263,8 +287,9 @@ class APIKeyRotationManager:
         """Reset usage counters (call daily/hourly)"""
         now = datetime.now()
         for key_info in self.keys.values():
-            # Reset RPM every minute
-            if (now - key_info.last_reset).seconds >= 60:
+            # Reset RPM every minute - use total_seconds() for accurate calculation
+            elapsed_seconds = (now - key_info.last_reset).total_seconds()
+            if elapsed_seconds >= 60:
                 key_info.rpm_used = 0
             
             # Reset RPD daily
@@ -407,8 +432,12 @@ class AgentTrainingSystem:
         # Update preferences
         self._update_preferences(agent_name, task_type)
         
-        # Periodically save
-        if random.random() < 0.1:  # 10% chance to save
+        # Save deterministically every 50 executions
+        total_executions = sum(
+            m.success_count + m.failure_count 
+            for m in self.metrics.values()
+        )
+        if total_executions % 50 == 0:
             self._save_training_data()
     
     def _update_preferences(self, agent_name: str, task_type: str):
@@ -649,10 +678,18 @@ class GeminiMiddleware:
         2. Selects appropriate API key
         3. Tracks the task
         4. Records results for training
+        
+        NOTE: This is a demonstration/template method.
+        Replace the simulation code (lines 690-695) with actual Gemini API calls.
+        Example integration:
+            import google.generativeai as genai
+            genai.configure(api_key=key_info.api_key)
+            model = genai.GenerativeModel(recommended_model)
+            response = await model.generate_content_async(task_description)
         """
-        # Generate task ID if not provided
+        # Generate unique task ID using UUID
         if not task_id:
-            task_id = f"task_{datetime.now().timestamp()}"
+            task_id = f"task_{uuid.uuid4().hex[:12]}"
         
         # Get recommended model from training
         recommended_model = self.training_system.get_recommended_model(
@@ -680,12 +717,23 @@ class GeminiMiddleware:
         start_time = datetime.now()
         
         try:
-            # Here you would call the actual Gemini API
-            # For demonstration, we'll simulate
+            # DEMO: Replace this section with actual Gemini API call
+            # Example implementation:
+            # import google.generativeai as genai
+            # genai.configure(api_key=key_info.api_key)
+            # model = genai.GenerativeModel(recommended_model)
+            # response = await model.generate_content_async(
+            #     task_description,
+            #     generation_config={"temperature": 0.7}
+            # )
+            # result_text = response.text
+            # tokens_used = response.usage_metadata.total_token_count
+            
             endpoint = self.endpoints[recommended_model]
             
-            # Simulate API call
+            # DEMO: Simulate API call (remove in production)
             await asyncio.sleep(0.1)  # Simulate network delay
+            tokens_used = 100  # Would come from actual API response
             
             # Record success
             latency_ms = (datetime.now() - start_time).total_seconds() * 1000
