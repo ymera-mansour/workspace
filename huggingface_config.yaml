@@ -1,0 +1,407 @@
+# HuggingFace Inference API Configuration
+# 12 FREE models with complete endpoint configuration
+# Multi-organization key rotation support
+# Agent training and task tracking integration
+
+# Provider Configuration
+provider:
+  name: "huggingface"
+  api_base: "https://api-inference.huggingface.co/models"
+  free_tier:
+    rpm_limit: 20  # Requests per minute (FREE tier)
+    daily_quota: 28800  # 20 RPM * 60 min * 24 hours
+    cost: "$0 FREE"
+    
+# Model Endpoints (12 FREE models)
+models:
+  # Code & Development Models
+  qwen-coder-32b:
+    model_id: "Qwen/Qwen2.5-Coder-32B-Instruct"
+    endpoint: "https://api-inference.huggingface.co/models/Qwen/Qwen2.5-Coder-32B-Instruct"
+    context_window: 131072
+    parameters: 32000000000
+    capabilities:
+      - code_generation
+      - code_review
+      - refactoring
+      - debugging
+    best_for:
+      - "Code generation"
+      - "Code review"
+      - "Refactoring"
+      - "80+ programming languages"
+    benchmarks:
+      humaneval: 89.5
+      mbpp: 85.3
+    cost: "$0 FREE"
+    
+  deepseek-coder-33b:
+    model_id: "deepseek-ai/deepseek-coder-33b-instruct"
+    endpoint: "https://api-inference.huggingface.co/models/deepseek-ai/deepseek-coder-33b-instruct"
+    context_window: 16384
+    parameters: 33000000000
+    capabilities:
+      - code_generation
+      - api_design
+      - test_generation
+    best_for:
+      - "API design"
+      - "Test generation"
+      - "Code documentation"
+    cost: "$0 FREE"
+    
+  starcoder2-15b:
+    model_id: "bigcode/starcoder2-15b"
+    endpoint: "https://api-inference.huggingface.co/models/bigcode/starcoder2-15b"
+    context_window: 16384
+    parameters: 15000000000
+    capabilities:
+      - code_completion
+      - code_analysis
+    best_for:
+      - "Code completion"
+      - "Code analysis"
+      - "Auto-completion"
+    cost: "$0 FREE"
+    
+  wizardcoder-python-34b:
+    model_id: "WizardLM/WizardCoder-Python-34B-V1.0"
+    endpoint: "https://api-inference.huggingface.co/models/WizardLM/WizardCoder-Python-34B-V1.0"
+    context_window: 8192
+    parameters: 34000000000
+    capabilities:
+      - python_development
+      - data_science
+    best_for:
+      - "Python development"
+      - "Data science"
+      - "Scientific computing"
+    cost: "$0 FREE"
+    
+  # Reasoning & Analysis Models
+  llama-vision-11b:
+    model_id: "meta-llama/Llama-3.2-11B-Vision-Instruct"
+    endpoint: "https://api-inference.huggingface.co/models/meta-llama/Llama-3.2-11B-Vision-Instruct"
+    context_window: 131072
+    parameters: 11000000000
+    capabilities:
+      - multimodal
+      - vision_text
+      - image_analysis
+    best_for:
+      - "Image analysis"
+      - "Visual QA"
+      - "Document understanding"
+    cost: "$0 FREE"
+    
+  phi-3-5-mini:
+    model_id: "microsoft/Phi-3.5-mini-instruct"
+    endpoint: "https://api-inference.huggingface.co/models/microsoft/Phi-3.5-mini-instruct"
+    context_window: 131072
+    parameters: 3800000000
+    capabilities:
+      - reasoning
+      - analysis
+      - testing
+    best_for:
+      - "Quick analysis"
+      - "Testing scenarios"
+      - "Efficient reasoning"
+    benchmarks:
+      mmlu: 69.0
+    cost: "$0 FREE"
+    
+  mixtral-8x22b:
+    model_id: "mistralai/Mixtral-8x22B-Instruct-v0.1"
+    endpoint: "https://api-inference.huggingface.co/models/mistralai/Mixtral-8x22B-Instruct-v0.1"
+    context_window: 65536
+    parameters: 176000000000  # 8 experts x 22B
+    capabilities:
+      - reasoning
+      - complex_analysis
+      - architecture_design
+    best_for:
+      - "Complex reasoning"
+      - "Architecture design"
+      - "High-quality outputs"
+    benchmarks:
+      mmlu: 77.8
+    cost: "$0 FREE"
+    
+  # Specialized Task Models
+  qwen-vl-7b:
+    model_id: "Qwen/Qwen2-VL-7B-Instruct"
+    endpoint: "https://api-inference.huggingface.co/models/Qwen/Qwen2-VL-7B-Instruct"
+    context_window: 32768
+    parameters: 7000000000
+    capabilities:
+      - vision_language
+      - image_captioning
+      - visual_grounding
+    best_for:
+      - "Image captioning"
+      - "Visual grounding"
+      - "Visual QA"
+    cost: "$0 FREE"
+    
+  zephyr-7b:
+    model_id: "HuggingFaceH4/zephyr-7b-beta"
+    endpoint: "https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta"
+    context_window: 8192
+    parameters: 7000000000
+    capabilities:
+      - chat
+      - conversation
+      - qa
+    best_for:
+      - "User interactions"
+      - "Q&A"
+      - "Conversations"
+    cost: "$0 FREE"
+    
+  falcon-40b:
+    model_id: "tiiuae/falcon-40b-instruct"
+    endpoint: "https://api-inference.huggingface.co/models/tiiuae/falcon-40b-instruct"
+    context_window: 2048
+    parameters: 40000000000
+    capabilities:
+      - general_purpose
+      - content_generation
+    best_for:
+      - "General tasks"
+      - "Content generation"
+      - "Versatile applications"
+    cost: "$0 FREE"
+    
+  nous-hermes-mixtral:
+    model_id: "NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO"
+    endpoint: "https://api-inference.huggingface.co/models/NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO"
+    context_window: 32768
+    parameters: 56000000000  # 8 experts x 7B
+    capabilities:
+      - instruction_following
+      - task_automation
+      - agent_workflows
+    best_for:
+      - "Task automation"
+      - "Agent workflows"
+      - "Instruction following"
+    cost: "$0 FREE"
+    
+  openchat-3-5:
+    model_id: "openchat/openchat-3.5-1210"
+    endpoint: "https://api-inference.huggingface.co/models/openchat/openchat-3.5-1210"
+    context_window: 8192
+    parameters: 7000000000
+    capabilities:
+      - conversational_ai
+      - interactive
+    best_for:
+      - "Interactive applications"
+      - "Chatbots"
+      - "User assistance"
+    cost: "$0 FREE"
+
+# Agent Configuration (40+ agents)
+agents:
+  coding_agent:
+    preferred_models:
+      - qwen-coder-32b
+      - deepseek-coder-33b
+    fallback_models:
+      - starcoder2-15b
+    temperature: 0.2
+    max_tokens: 4096
+    
+  architecture_agent:
+    preferred_models:
+      - mixtral-8x22b
+      - llama-vision-11b
+    fallback_models:
+      - falcon-40b
+    temperature: 0.3
+    max_tokens: 8192
+    
+  testing_agent:
+    preferred_models:
+      - phi-3-5-mini
+      - deepseek-coder-33b
+    fallback_models:
+      - zephyr-7b
+    temperature: 0.1
+    max_tokens: 2048
+    
+  security_agent:
+    preferred_models:
+      - mixtral-8x22b
+      - phi-3-5-mini
+    fallback_models:
+      - falcon-40b
+    temperature: 0.2
+    max_tokens: 4096
+    
+  python_agent:
+    preferred_models:
+      - wizardcoder-python-34b
+      - qwen-coder-32b
+    fallback_models:
+      - deepseek-coder-33b
+    temperature: 0.2
+    max_tokens: 4096
+    
+  visual_agent:
+    preferred_models:
+      - llama-vision-11b
+      - qwen-vl-7b
+    temperature: 0.3
+    max_tokens: 4096
+    
+  documentation_agent:
+    preferred_models:
+      - zephyr-7b
+      - openchat-3-5
+    fallback_models:
+      - falcon-40b
+    temperature: 0.4
+    max_tokens: 4096
+    
+  refactoring_agent:
+    preferred_models:
+      - qwen-coder-32b
+      - starcoder2-15b
+    fallback_models:
+      - deepseek-coder-33b
+    temperature: 0.2
+    max_tokens: 4096
+    
+  api_design_agent:
+    preferred_models:
+      - deepseek-coder-33b
+      - qwen-coder-32b
+    fallback_models:
+      - starcoder2-15b
+    temperature: 0.3
+    max_tokens: 4096
+    
+  automation_agent:
+    preferred_models:
+      - nous-hermes-mixtral
+      - mixtral-8x22b
+    fallback_models:
+      - falcon-40b
+    temperature: 0.2
+    max_tokens: 2048
+
+# Task-Model Mapping
+task_mappings:
+  code_generation:
+    primary: qwen-coder-32b
+    secondary: deepseek-coder-33b
+    fallback: starcoder2-15b
+    
+  code_review:
+    primary: qwen-coder-32b
+    secondary: starcoder2-15b
+    fallback: deepseek-coder-33b
+    
+  python_development:
+    primary: wizardcoder-python-34b
+    secondary: qwen-coder-32b
+    fallback: deepseek-coder-33b
+    
+  api_design:
+    primary: deepseek-coder-33b
+    secondary: qwen-coder-32b
+    fallback: starcoder2-15b
+    
+  testing:
+    primary: phi-3-5-mini
+    secondary: deepseek-coder-33b
+    fallback: zephyr-7b
+    
+  security_analysis:
+    primary: mixtral-8x22b
+    secondary: phi-3-5-mini
+    fallback: falcon-40b
+    
+  architecture_design:
+    primary: mixtral-8x22b
+    secondary: llama-vision-11b
+    fallback: falcon-40b
+    
+  image_analysis:
+    primary: llama-vision-11b
+    secondary: qwen-vl-7b
+    
+  conversation:
+    primary: zephyr-7b
+    secondary: openchat-3-5
+    fallback: falcon-40b
+    
+  task_automation:
+    primary: nous-hermes-mixtral
+    secondary: mixtral-8x22b
+    fallback: falcon-40b
+
+# API Key Rotation Configuration
+api_keys:
+  # Environment variables: HUGGINGFACE_API_KEY_1, HUGGINGFACE_API_KEY_2, etc.
+  rotation_strategy: "least_used"  # Options: round_robin, least_used, weighted
+  failover_threshold: 0.80  # Switch keys at 80% quota usage
+  health_check_interval: 300  # Check key health every 5 minutes
+  
+# Caching Configuration
+caching:
+  enabled: true
+  ttl: 3600  # Cache for 1 hour
+  max_size_mb: 500
+  tiers:
+    l1_memory:
+      enabled: true
+      max_size_mb: 100
+      ttl: 300
+    l2_redis:
+      enabled: false  # Optional
+      host: "localhost"
+      port: 6379
+      ttl: 3600
+    l3_cloud_storage:
+      enabled: false  # Optional
+      ttl: 86400
+
+# Agent Training Configuration
+training:
+  enabled: true
+  data_file: "huggingface_agent_training_data.json"
+  learning_rate: 0.01
+  metrics:
+    - success_rate
+    - latency_ms
+    - quality_score
+  update_frequency: 100  # Update after 100 requests
+
+# Task Tracking Configuration
+tracking:
+  enabled: true
+  max_active_tasks: 100
+  max_history_tasks: 1000
+  retention_days: 30
+
+# Quota Management
+quota:
+  rpm_limit: 20
+  daily_limit: 28800
+  alert_thresholds:
+    - 0.80  # 80%
+    - 0.90  # 90%
+    - 0.95  # 95%
+  alert_channels:
+    - console
+    - file
+
+# Monitoring Configuration
+monitoring:
+  enabled: true
+  metrics_interval: 60  # Collect metrics every minute
+  dashboard_refresh: 5  # Refresh dashboard every 5 seconds
+  log_file: "huggingface_monitoring.log"
