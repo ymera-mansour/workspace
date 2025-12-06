@@ -1,0 +1,668 @@
+# Mistral AI Configuration
+# ========================
+# Complete configuration for all 6 Mistral models (100% FREE tier)
+#
+# Environment Setup:
+# - MISTRAL_API_KEY: Primary API key
+# - MISTRAL_API_KEY_1, MISTRAL_API_KEY_2, etc.: Additional keys from different organizations
+# - MISTRAL_ORG_1, MISTRAL_ORG_2, etc.: Organization names for each key
+#
+# Cost: $0 - 100% FREE tier operation
+# Free Tier Limits: 60 RPM, 500K TPM, 1B tokens/month per key
+
+# ============================================================================
+# MISTRAL MODELS
+# ============================================================================
+
+mistral_models:
+  mistral-large-latest:
+    name: "Mistral Large 3"
+    endpoint: "https://api.mistral.ai/v1/chat/completions"
+    streaming_endpoint: "https://api.mistral.ai/v1/chat/completions"
+    rpm_limit: 60
+    rpd_limit: 86400
+    tpm_limit: 500000
+    tpd_limit: 1000000000
+    context_window: 256000
+    parameters: "41B active / 675B total"
+    supports_multimodal: true
+    supports_function_calling: true
+    supports_json_mode: true
+    best_for:
+      - complex_reasoning
+      - architecture
+      - security
+      - large_context
+    cost: "$0 FREE"
+    response_time_avg: "1-2s"
+    temperature_default: 0.7
+    
+  codestral-latest:
+    name: "Codestral 25.01"
+    endpoint: "https://api.mistral.ai/v1/chat/completions"
+    streaming_endpoint: "https://api.mistral.ai/v1/chat/completions"
+    rpm_limit: 60
+    rpd_limit: 86400
+    tpm_limit: 500000
+    tpd_limit: 1000000000
+    context_window: 256000
+    parameters: "22B"
+    supports_multimodal: false
+    supports_function_calling: true
+    supports_json_mode: true
+    supports_code_completion: true
+    languages_supported: 80
+    best_for:
+      - code_generation
+      - code_review
+      - debugging
+      - refactoring
+    cost: "$0 FREE"
+    response_time_avg: "0.8-1.5s"
+    temperature_default: 0.2
+    
+  pixtral-large-latest:
+    name: "Pixtral Large"
+    endpoint: "https://api.mistral.ai/v1/chat/completions"
+    streaming_endpoint: "https://api.mistral.ai/v1/chat/completions"
+    rpm_limit: 60
+    rpd_limit: 86400
+    tpm_limit: 500000
+    tpd_limit: 1000000000
+    context_window: 128000
+    parameters: "123B"
+    supports_multimodal: true
+    supports_vision: true
+    supports_function_calling: true
+    supports_json_mode: true
+    image_formats:
+      - jpeg
+      - png
+      - gif
+      - webp
+    best_for:
+      - vision
+      - image_analysis
+      - ui_review
+      - diagram_understanding
+    cost: "$0 FREE"
+    response_time_avg: "1.5-2.5s"
+    temperature_default: 0.7
+    
+  ministral-3b-latest:
+    name: "Ministral 3B"
+    endpoint: "https://api.mistral.ai/v1/chat/completions"
+    streaming_endpoint: "https://api.mistral.ai/v1/chat/completions"
+    rpm_limit: 60
+    rpd_limit: 86400
+    tpm_limit: 500000
+    tpd_limit: 1000000000
+    context_window: 256000
+    parameters: "3B"
+    supports_multimodal: false
+    supports_function_calling: true
+    supports_json_mode: true
+    edge_optimized: true
+    best_for:
+      - validation
+      - formatting
+      - simple_tasks
+      - monitoring
+    cost: "$0 FREE"
+    response_time_avg: "0.3-0.8s"
+    temperature_default: 0.3
+    
+  ministral-8b-latest:
+    name: "Ministral 8B"
+    endpoint: "https://api.mistral.ai/v1/chat/completions"
+    streaming_endpoint: "https://api.mistral.ai/v1/chat/completions"
+    rpm_limit: 60
+    rpd_limit: 86400
+    tpm_limit: 500000
+    tpd_limit: 1000000000
+    context_window: 256000
+    parameters: "8B"
+    supports_multimodal: false
+    supports_function_calling: true
+    supports_json_mode: true
+    edge_optimized: true
+    best_for:
+      - database
+      - api
+      - testing
+      - standard_tasks
+    cost: "$0 FREE"
+    response_time_avg: "0.5-1s"
+    temperature_default: 0.5
+    
+  ministral-14b-latest:
+    name: "Ministral 14B"
+    endpoint: "https://api.mistral.ai/v1/chat/completions"
+    streaming_endpoint: "https://api.mistral.ai/v1/chat/completions"
+    rpm_limit: 60
+    rpd_limit: 86400
+    tpm_limit: 500000
+    tpd_limit: 1000000000
+    context_window: 256000
+    parameters: "14B"
+    supports_multimodal: false
+    supports_function_calling: true
+    supports_json_mode: true
+    edge_optimized: true
+    best_for:
+      - analysis
+      - planning
+      - documentation
+      - moderate_tasks
+    cost: "$0 FREE"
+    response_time_avg: "0.7-1.2s"
+    temperature_default: 0.6
+
+
+# ============================================================================
+# AGENT CONFIGURATION (40+ Agents)
+# ============================================================================
+
+agents:
+  # Code-focused agents (use Codestral)
+  coding_agent:
+    preferred_models:
+      - codestral-latest
+      - mistral-large-latest
+    fallback_chain:
+      - codestral-latest
+      - mistral-large-latest
+      - ministral-8b-latest
+    task_types:
+      - code_generation
+      - code_review
+    temperature_override: 0.2
+    
+  code_review_agent:
+    preferred_models:
+      - codestral-latest
+      - mistral-large-latest
+    fallback_chain:
+      - codestral-latest
+      - mistral-large-latest
+      - ministral-14b-latest
+    task_types:
+      - code_review
+      - debugging
+    temperature_override: 0.1
+    
+  debugging_agent:
+    preferred_models:
+      - codestral-latest
+      - ministral-14b-latest
+    fallback_chain:
+      - codestral-latest
+      - ministral-14b-latest
+      - ministral-8b-latest
+    task_types:
+      - debugging
+      - refactoring
+    temperature_override: 0.3
+    
+  refactoring_agent:
+    preferred_models:
+      - codestral-latest
+      - ministral-14b-latest
+    fallback_chain:
+      - codestral-latest
+      - ministral-14b-latest
+      - ministral-8b-latest
+    task_types:
+      - refactoring
+      - code_optimization
+    temperature_override: 0.2
+    
+  # Architecture and planning agents (use Mistral Large 3)
+  architecture_agent:
+    preferred_models:
+      - mistral-large-latest
+      - ministral-14b-latest
+    fallback_chain:
+      - mistral-large-latest
+      - ministral-14b-latest
+      - codestral-latest
+    task_types:
+      - architecture
+      - system_design
+    temperature_override: 0.7
+    
+  planning_agent:
+    preferred_models:
+      - mistral-large-latest
+      - ministral-14b-latest
+    fallback_chain:
+      - mistral-large-latest
+      - ministral-14b-latest
+      - ministral-8b-latest
+    task_types:
+      - planning
+      - analysis
+    temperature_override: 0.6
+    
+  security_agent:
+    preferred_models:
+      - mistral-large-latest
+      - codestral-latest
+    fallback_chain:
+      - mistral-large-latest
+      - codestral-latest
+      - ministral-14b-latest
+    task_types:
+      - security
+      - vulnerability_analysis
+    temperature_override: 0.1
+    
+  # Vision agents (use Pixtral)
+  ui_agent:
+    preferred_models:
+      - pixtral-large-latest
+      - mistral-large-latest
+    fallback_chain:
+      - pixtral-large-latest
+      - mistral-large-latest
+      - ministral-14b-latest
+    task_types:
+      - ui_review
+      - vision
+    temperature_override: 0.7
+    
+  vision_agent:
+    preferred_models:
+      - pixtral-large-latest
+    fallback_chain:
+      - pixtral-large-latest
+      - mistral-large-latest
+    task_types:
+      - vision
+      - image_analysis
+    temperature_override: 0.6
+    
+  diagram_agent:
+    preferred_models:
+      - pixtral-large-latest
+      - mistral-large-latest
+    fallback_chain:
+      - pixtral-large-latest
+      - mistral-large-latest
+      - ministral-14b-latest
+    task_types:
+      - diagram_understanding
+      - vision
+    temperature_override: 0.5
+    
+  # Standard agents (use Ministral 8B/14B)
+  database_agent:
+    preferred_models:
+      - ministral-8b-latest
+      - codestral-latest
+    fallback_chain:
+      - ministral-8b-latest
+      - codestral-latest
+      - ministral-14b-latest
+    task_types:
+      - database
+      - sql_generation
+    temperature_override: 0.3
+    
+  api_agent:
+    preferred_models:
+      - ministral-8b-latest
+      - codestral-latest
+    fallback_chain:
+      - ministral-8b-latest
+      - codestral-latest
+      - ministral-14b-latest
+    task_types:
+      - api
+      - rest_api
+    temperature_override: 0.4
+    
+  testing_agent:
+    preferred_models:
+      - ministral-8b-latest
+      - codestral-latest
+    fallback_chain:
+      - ministral-8b-latest
+      - codestral-latest
+      - ministral-3b-latest
+    task_types:
+      - testing
+      - test_generation
+    temperature_override: 0.2
+    
+  documentation_agent:
+    preferred_models:
+      - ministral-14b-latest
+      - mistral-large-latest
+    fallback_chain:
+      - ministral-14b-latest
+      - mistral-large-latest
+      - ministral-8b-latest
+    task_types:
+      - documentation
+      - writing
+    temperature_override: 0.6
+    
+  analysis_agent:
+    preferred_models:
+      - ministral-14b-latest
+      - mistral-large-latest
+    fallback_chain:
+      - ministral-14b-latest
+      - mistral-large-latest
+      - ministral-8b-latest
+    task_types:
+      - analysis
+      - data_analysis
+    temperature_override: 0.5
+    
+  # Fast/simple agents (use Ministral 3B)
+  validation_agent:
+    preferred_models:
+      - ministral-3b-latest
+      - ministral-8b-latest
+    fallback_chain:
+      - ministral-3b-latest
+      - ministral-8b-latest
+    task_types:
+      - validation
+      - simple_tasks
+    temperature_override: 0.1
+    
+  formatting_agent:
+    preferred_models:
+      - ministral-3b-latest
+      - ministral-8b-latest
+    fallback_chain:
+      - ministral-3b-latest
+      - ministral-8b-latest
+    task_types:
+      - formatting
+      - linting
+    temperature_override: 0.0
+    
+  monitoring_agent:
+    preferred_models:
+      - ministral-3b-latest
+      - ministral-8b-latest
+    fallback_chain:
+      - ministral-3b-latest
+      - ministral-8b-latest
+    task_types:
+      - monitoring
+      - simple_tasks
+    temperature_override: 0.2
+    
+  linting_agent:
+    preferred_models:
+      - ministral-3b-latest
+      - codestral-latest
+    fallback_chain:
+      - ministral-3b-latest
+      - codestral-latest
+      - ministral-8b-latest
+    task_types:
+      - linting
+      - code_style
+    temperature_override: 0.0
+
+
+# ============================================================================
+# TASK-MODEL MAPPING
+# ============================================================================
+
+task_model_mapping:
+  # Code tasks
+  code_generation:
+    primary: codestral-latest
+    fallback:
+      - codestral-latest
+      - mistral-large-latest
+      - ministral-8b-latest
+    complexity: moderate
+    
+  code_review:
+    primary: codestral-latest
+    fallback:
+      - codestral-latest
+      - mistral-large-latest
+      - ministral-14b-latest
+    complexity: moderate
+    
+  debugging:
+    primary: codestral-latest
+    fallback:
+      - codestral-latest
+      - ministral-14b-latest
+      - ministral-8b-latest
+    complexity: moderate
+    
+  refactoring:
+    primary: codestral-latest
+    fallback:
+      - codestral-latest
+      - ministral-14b-latest
+      - mistral-large-latest
+    complexity: moderate
+    
+  # Architecture tasks
+  architecture:
+    primary: mistral-large-latest
+    fallback:
+      - mistral-large-latest
+      - ministral-14b-latest
+      - codestral-latest
+    complexity: complex
+    
+  system_design:
+    primary: mistral-large-latest
+    fallback:
+      - mistral-large-latest
+      - ministral-14b-latest
+    complexity: complex
+    
+  security:
+    primary: mistral-large-latest
+    fallback:
+      - mistral-large-latest
+      - codestral-latest
+      - ministral-14b-latest
+    complexity: complex
+    
+  # Vision tasks
+  vision:
+    primary: pixtral-large-latest
+    fallback:
+      - pixtral-large-latest
+      - mistral-large-latest
+    complexity: moderate
+    
+  image_analysis:
+    primary: pixtral-large-latest
+    fallback:
+      - pixtral-large-latest
+      - mistral-large-latest
+    complexity: moderate
+    
+  ui_review:
+    primary: pixtral-large-latest
+    fallback:
+      - pixtral-large-latest
+      - mistral-large-latest
+      - ministral-14b-latest
+    complexity: moderate
+    
+  # Standard tasks
+  database:
+    primary: ministral-8b-latest
+    fallback:
+      - ministral-8b-latest
+      - codestral-latest
+      - ministral-14b-latest
+    complexity: simple
+    
+  api:
+    primary: ministral-8b-latest
+    fallback:
+      - ministral-8b-latest
+      - codestral-latest
+      - ministral-14b-latest
+    complexity: simple
+    
+  testing:
+    primary: ministral-8b-latest
+    fallback:
+      - ministral-8b-latest
+      - codestral-latest
+      - ministral-3b-latest
+    complexity: simple
+    
+  documentation:
+    primary: ministral-14b-latest
+    fallback:
+      - ministral-14b-latest
+      - mistral-large-latest
+      - ministral-8b-latest
+    complexity: simple
+    
+  analysis:
+    primary: ministral-14b-latest
+    fallback:
+      - ministral-14b-latest
+      - mistral-large-latest
+      - ministral-8b-latest
+    complexity: moderate
+    
+  # Simple tasks
+  validation:
+    primary: ministral-3b-latest
+    fallback:
+      - ministral-3b-latest
+      - ministral-8b-latest
+    complexity: simple
+    
+  formatting:
+    primary: ministral-3b-latest
+    fallback:
+      - ministral-3b-latest
+      - ministral-8b-latest
+    complexity: simple
+    
+  linting:
+    primary: ministral-3b-latest
+    fallback:
+      - ministral-3b-latest
+      - codestral-latest
+      - ministral-8b-latest
+    complexity: simple
+    
+  monitoring:
+    primary: ministral-3b-latest
+    fallback:
+      - ministral-3b-latest
+      - ministral-8b-latest
+    complexity: simple
+
+
+# ============================================================================
+# KEY ROTATION CONFIGURATION
+# ============================================================================
+
+key_rotation:
+  strategy: "least_used"  # Options: round_robin, least_used, weighted
+  health_check_interval_seconds: 60
+  failure_threshold: 5
+  quota_warning_thresholds:
+    - 80  # Warn at 80% usage
+    - 90  # Alert at 90% usage
+    - 95  # Critical at 95% usage
+
+
+# ============================================================================
+# TRAINING SYSTEM CONFIGURATION
+# ============================================================================
+
+training:
+  data_file: "mistral_agent_training_data.json"
+  minimum_executions_for_recommendation: 10
+  save_interval_executions: 50
+  metrics:
+    - success_rate
+    - latency
+    - quality_score
+    - token_usage
+
+
+# ============================================================================
+# TASK TRACKING CONFIGURATION
+# ============================================================================
+
+task_tracking:
+  max_history: 1000
+  active_task_timeout_minutes: 30
+  metrics:
+    - latency
+    - success_rate
+    - model_usage
+    - task_type_distribution
+
+
+# ============================================================================
+# MONITORING & ALERTING
+# ============================================================================
+
+monitoring:
+  enable_real_time_dashboard: true
+  dashboard_refresh_interval_seconds: 5
+  enable_quota_alerts: true
+  enable_performance_alerts: true
+  alert_channels:
+    - console
+    - log_file
+  
+  performance_thresholds:
+    latency_warning_ms: 3000
+    latency_critical_ms: 5000
+    success_rate_warning: 0.9
+    success_rate_critical: 0.8
+
+
+# ============================================================================
+# CACHING CONFIGURATION
+# ============================================================================
+
+caching:
+  enabled: true
+  l1_memory_cache:
+    enabled: true
+    max_size_mb: 100
+    ttl_seconds: 300
+  l2_redis_cache:
+    enabled: false  # Set to true if Redis is available
+    host: "localhost"
+    port: 6379
+    ttl_seconds: 3600
+  l3_cloud_storage:
+    enabled: false  # Set to true if cloud storage is configured
+    bucket_name: "mistral-cache"
+    ttl_seconds: 86400
+
+
+# ============================================================================
+# FREE TIER SETTINGS
+# ============================================================================
+
+free_tier:
+  cost: "$0"
+  rpm_limit: 60
+  rpd_limit: 86400
+  tpm_limit: 500000
+  tpd_limit: 1000000000  # 1 billion tokens per month
+  context_window_max: 256000
+  no_credit_card_required: true
+  unlimited_keys_supported: true
