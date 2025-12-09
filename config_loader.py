@@ -113,7 +113,7 @@ class ConfigLoader:
             # Check for API key(s)
             if name == "gemini":
                 keys = cfg.get("api_keys", [])
-                if not any(keys):
+                if not any(k for k in keys if k):
                     logger.warning(f"Gemini provider enabled but no API keys configured")
             elif name in ["anthropic", "replicate"]:
                 # Optional providers
