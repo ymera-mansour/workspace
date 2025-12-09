@@ -1,0 +1,473 @@
+# Gemini Advanced Configuration
+# Complete configuration for endpoints, API keys, agents, and models
+
+# ============================================================================
+# API KEYS CONFIGURATION (Multiple organizations support)
+# ============================================================================
+api_keys:
+  primary:
+    key: ${GEMINI_API_KEY}
+    organization: "default"
+    priority: 1
+    enabled: true
+  
+  # Additional keys from different Google organizations
+  secondary_org1:
+    key: ${GEMINI_API_KEY_1}
+    organization: "org_research"
+    priority: 2
+    enabled: true
+  
+  secondary_org2:
+    key: ${GEMINI_API_KEY_2}
+    organization: "org_development"
+    priority: 3
+    enabled: true
+  
+  backup:
+    key: ${GEMINI_API_KEY_BACKUP}
+    organization: "org_backup"
+    priority: 4
+    enabled: true
+
+# Key rotation strategy
+key_rotation:
+  strategy: "weighted"  # Options: round_robin, least_used, weighted
+  rotation_threshold: 0.8  # Rotate when 80% of quota used
+  failure_threshold: 5  # Deactivate key after 5 consecutive failures
+  reset_interval_minutes: 60
+
+# ============================================================================
+# GEMINI MODEL ENDPOINTS
+# ============================================================================
+models:
+  gemini-2.0-flash-exp:
+    display_name: "Gemini 2.0 Flash (Experimental)"
+    endpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent"
+    streaming_endpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:streamGenerateContent"
+    api_version: "v1beta"
+    enabled: true
+    
+    # Capabilities
+    supports_streaming: true
+    supports_multimodal: true
+    supports_function_calling: true
+    supports_grounding: true
+    
+    # Limits (Free tier)
+    rpm_limit: 10
+    rpd_limit: 1500
+    max_input_tokens: 1000000
+    max_output_tokens: 8192
+    
+    # Configuration
+    temperature_range: [0.0, 2.0]
+    default_temperature: 0.7
+    top_p: 0.95
+    top_k: 40
+    
+    # Use cases
+    best_for:
+      - "fast_tasks"
+      - "general_purpose"
+      - "multimodal_analysis"
+      - "real_time_streaming"
+  
+  gemini-1.5-flash:
+    display_name: "Gemini 1.5 Flash"
+    endpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+    streaming_endpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent"
+    api_version: "v1beta"
+    enabled: true
+    
+    supports_streaming: true
+    supports_multimodal: true
+    supports_function_calling: true
+    supports_grounding: true
+    
+    rpm_limit: 15
+    rpd_limit: 1500
+    max_input_tokens: 1000000
+    max_output_tokens: 8192
+    
+    temperature_range: [0.0, 2.0]
+    default_temperature: 0.7
+    top_p: 0.95
+    top_k: 40
+    
+    best_for:
+      - "standard_tasks"
+      - "code_generation"
+      - "documentation"
+      - "data_analysis"
+  
+  gemini-1.5-pro:
+    display_name: "Gemini 1.5 Pro"
+    endpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent"
+    streaming_endpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:streamGenerateContent"
+    api_version: "v1beta"
+    enabled: true
+    
+    supports_streaming: true
+    supports_multimodal: true
+    supports_function_calling: true
+    supports_grounding: true
+    
+    rpm_limit: 2
+    rpd_limit: 50
+    max_input_tokens: 2000000
+    max_output_tokens: 8192
+    
+    temperature_range: [0.0, 2.0]
+    default_temperature: 0.7
+    top_p: 0.95
+    top_k: 40
+    
+    best_for:
+      - "complex_reasoning"
+      - "large_context"
+      - "critical_tasks"
+      - "architectural_review"
+  
+  gemini-1.5-flash-8b:
+    display_name: "Gemini 1.5 Flash 8B"
+    endpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent"
+    streaming_endpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:streamGenerateContent"
+    api_version: "v1beta"
+    enabled: true
+    
+    supports_streaming: true
+    supports_multimodal: false
+    supports_function_calling: true
+    supports_grounding: false
+    
+    rpm_limit: 15
+    rpd_limit: 4000
+    max_input_tokens: 1000000
+    max_output_tokens: 8192
+    
+    temperature_range: [0.0, 2.0]
+    default_temperature: 0.7
+    top_p: 0.95
+    top_k: 40
+    
+    best_for:
+      - "bulk_operations"
+      - "simple_tasks"
+      - "high_throughput"
+      - "quick_validations"
+
+# ============================================================================
+# AGENT CONFIGURATION (40+ agents)
+# ============================================================================
+agents:
+  # Code-related agents
+  coding_agent:
+    display_name: "Coding Agent"
+    description: "General purpose code generation and refactoring"
+    task_types:
+      - "code_generation"
+      - "code_review"
+      - "refactoring"
+      - "bug_fixing"
+    model_preferences:
+      simple: "gemini-2.0-flash-exp"
+      moderate: "gemini-1.5-flash"
+      complex: "gemini-1.5-pro"
+    temperature_overrides:
+      code_generation: 0.3
+      code_review: 0.4
+      refactoring: 0.3
+  
+  python_agent:
+    display_name: "Python Specialist"
+    description: "Python-specific code generation and optimization"
+    task_types:
+      - "python_code"
+      - "python_optimization"
+      - "python_testing"
+    model_preferences:
+      simple: "gemini-1.5-flash"
+      moderate: "gemini-1.5-flash"
+      complex: "gemini-1.5-pro"
+    temperature_overrides:
+      python_code: 0.2
+  
+  javascript_agent:
+    display_name: "JavaScript Specialist"
+    description: "JavaScript/TypeScript code generation"
+    task_types:
+      - "javascript_code"
+      - "typescript_code"
+      - "frontend_development"
+    model_preferences:
+      simple: "gemini-2.0-flash-exp"
+      moderate: "gemini-1.5-flash"
+      complex: "gemini-1.5-pro"
+  
+  # Database agents
+  database_agent:
+    display_name: "Database Agent"
+    description: "SQL generation and database operations"
+    task_types:
+      - "sql_generation"
+      - "query_optimization"
+      - "schema_design"
+    model_preferences:
+      simple: "gemini-1.5-flash"
+      moderate: "gemini-1.5-flash"
+      complex: "gemini-1.5-pro"
+    temperature_overrides:
+      sql_generation: 0.1
+      query_optimization: 0.2
+  
+  # Analysis agents
+  analysis_agent:
+    display_name: "Data Analysis Agent"
+    description: "Data analysis and insights generation"
+    task_types:
+      - "data_analysis"
+      - "statistical_analysis"
+      - "data_visualization"
+    model_preferences:
+      simple: "gemini-1.5-flash-8b"
+      moderate: "gemini-2.0-flash-exp"
+      complex: "gemini-1.5-pro"
+  
+  # Documentation agents
+  documentation_agent:
+    display_name: "Documentation Agent"
+    description: "Technical documentation generation"
+    task_types:
+      - "documentation_generation"
+      - "api_documentation"
+      - "readme_generation"
+    model_preferences:
+      simple: "gemini-2.0-flash-exp"
+      moderate: "gemini-1.5-flash"
+      complex: "gemini-1.5-pro"
+    temperature_overrides:
+      documentation_generation: 0.6
+  
+  # Testing agents
+  testing_agent:
+    display_name: "Testing Agent"
+    description: "Test case generation and test planning"
+    task_types:
+      - "test_generation"
+      - "test_planning"
+      - "test_review"
+    model_preferences:
+      simple: "gemini-1.5-flash"
+      moderate: "gemini-1.5-flash"
+      complex: "gemini-1.5-pro"
+    temperature_overrides:
+      test_generation: 0.3
+  
+  # Architecture agents
+  architecture_agent:
+    display_name: "Architecture Agent"
+    description: "System architecture and design"
+    task_types:
+      - "architectural_design"
+      - "system_design"
+      - "design_review"
+    model_preferences:
+      simple: "gemini-1.5-flash"
+      moderate: "gemini-1.5-pro"
+      complex: "gemini-1.5-pro"
+    temperature_overrides:
+      architectural_design: 0.7
+  
+  # DevOps agents
+  devops_agent:
+    display_name: "DevOps Agent"
+    description: "CI/CD, deployment, and infrastructure"
+    task_types:
+      - "cicd_configuration"
+      - "deployment_scripts"
+      - "infrastructure_code"
+    model_preferences:
+      simple: "gemini-1.5-flash"
+      moderate: "gemini-1.5-flash"
+      complex: "gemini-1.5-pro"
+  
+  # Security agents
+  security_agent:
+    display_name: "Security Agent"
+    description: "Security analysis and vulnerability detection"
+    task_types:
+      - "security_review"
+      - "vulnerability_analysis"
+      - "security_recommendations"
+    model_preferences:
+      simple: "gemini-1.5-flash"
+      moderate: "gemini-1.5-pro"
+      complex: "gemini-1.5-pro"
+    temperature_overrides:
+      security_review: 0.3
+  
+  # UI/UX agents
+  ui_agent:
+    display_name: "UI/UX Agent"
+    description: "User interface and experience design"
+    task_types:
+      - "ui_design"
+      - "ux_analysis"
+      - "mockup_generation"
+    model_preferences:
+      simple: "gemini-2.0-flash-exp"
+      moderate: "gemini-2.0-flash-exp"
+      complex: "gemini-1.5-pro"
+    supports_multimodal: true
+  
+  # Template for additional agents (expand to 40+ as needed)
+  # Add more agents following the same pattern:
+  # Examples: api_agent, microservices_agent, mobile_agent, web_agent,
+  #           ml_agent, data_engineering_agent, qa_agent, monitoring_agent,
+  #           logging_agent, caching_agent, auth_agent, notification_agent,
+  #           email_agent, sms_agent, payment_agent, search_agent, etc.
+  # 
+  # Each agent should define:
+  # - display_name, description
+  # - task_types (list of tasks it handles)
+  # - model_preferences (simple/moderate/complex)
+  # - temperature_overrides (optional, per task type)
+  # 
+  # This configuration shows 11 example agents.
+  # The system supports unlimited agents - add yours below:
+
+# ============================================================================
+# TASK-MODEL MAPPING
+# ============================================================================
+task_model_mapping:
+  # Code-related tasks
+  code_generation:
+    primary_model: "gemini-2.0-flash-exp"
+    fallback_models:
+      - "gemini-1.5-flash"
+      - "gemini-1.5-pro"
+    temperature: 0.3
+  
+  code_review:
+    primary_model: "gemini-1.5-pro"
+    fallback_models:
+      - "gemini-2.0-flash-exp"
+      - "gemini-1.5-flash"
+    temperature: 0.4
+  
+  # Database tasks
+  sql_generation:
+    primary_model: "gemini-1.5-flash"
+    fallback_models:
+      - "gemini-2.0-flash-exp"
+    temperature: 0.1
+  
+  # Documentation tasks
+  documentation_generation:
+    primary_model: "gemini-1.5-flash"
+    fallback_models:
+      - "gemini-2.0-flash-exp"
+    temperature: 0.6
+  
+  # Analysis tasks
+  data_analysis:
+    primary_model: "gemini-1.5-pro"
+    fallback_models:
+      - "gemini-2.0-flash-exp"
+      - "gemini-1.5-flash"
+    temperature: 0.4
+
+# ============================================================================
+# TRAINING CONFIGURATION
+# ============================================================================
+training:
+  enabled: true
+  storage_path: "agent_training_data.json"
+  auto_save_interval_seconds: 300  # Save every 5 minutes
+  max_history_per_agent: 1000
+  learning_rate: 0.1
+  
+  # Metrics to track
+  metrics:
+    - "success_rate"
+    - "latency"
+    - "token_usage"
+    - "quality_score"
+    - "cost"
+  
+  # When to update preferences
+  min_executions_before_learning: 10
+  confidence_threshold: 0.7
+
+# ============================================================================
+# MONITORING AND TRACKING
+# ============================================================================
+monitoring:
+  enabled: true
+  log_level: "INFO"
+  log_file: "gemini_usage.log"
+  
+  # Task tracking
+  track_active_tasks: true
+  max_completed_tasks_history: 1000
+  
+  # Alerts
+  alerts:
+    quota_warning_threshold: 0.8
+    quota_critical_threshold: 0.95
+    failure_rate_threshold: 0.2
+  
+  # Metrics export
+  export_metrics: true
+  export_format: "json"
+  export_path: "metrics/"
+
+# ============================================================================
+# MIDDLEWARE CONFIGURATION
+# ============================================================================
+middleware:
+  enabled: true
+  
+  # Caching
+  caching:
+    enabled: true
+    l1_memory_size_mb: 100
+    l2_redis_url: "redis://localhost:6379"
+    l3_cloud_storage_bucket: "gemini-cache"
+  
+  # Rate limiting
+  rate_limiting:
+    enabled: true
+    strategy: "sliding_window"
+    buffer_percentage: 0.1  # Keep 10% buffer
+  
+  # Retry configuration
+  retry:
+    max_retries: 3
+    backoff_strategy: "exponential"
+    initial_delay_ms: 1000
+
+# ============================================================================
+# ENVIRONMENT VARIABLES REFERENCE
+# ============================================================================
+# Set these in your .env file:
+# 
+# # Primary key
+# GEMINI_API_KEY=your_primary_key_here
+# 
+# # Secondary keys from different organizations
+# GEMINI_API_KEY_1=your_org1_key_here
+# GEMINI_ORG_1=org_research
+# 
+# GEMINI_API_KEY_2=your_org2_key_here
+# GEMINI_ORG_2=org_development
+# 
+# GEMINI_API_KEY_BACKUP=your_backup_key_here
+# 
+# # Optional: Redis for caching
+# REDIS_URL=redis://localhost:6379
+# 
+# # Optional: Cloud storage
+# GOOGLE_CLOUD_PROJECT=your_project_id
+# GOOGLE_APPLICATION_CREDENTIALS=/path/to/credentials.json
