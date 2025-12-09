@@ -51,7 +51,7 @@ class GroqCacheManager:
     def _generate_cache_key(self, prompt: str, model: str) -> str:
         """Generate cache key from prompt and model"""
         content = f"{model}:{prompt}"
-        return hashlib.sha256(content.encode()).hexdigest()
+        return hashlib.md5(content.encode()).hexdigest()
     
     async def get(self, prompt: str, model: str) -> Optional[Dict[str, Any]]:
         """
