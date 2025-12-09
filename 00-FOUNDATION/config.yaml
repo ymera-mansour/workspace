@@ -1,0 +1,448 @@
+# ============================================
+# YMERA AI Platform - Main Configuration
+# ============================================
+
+# System Information
+system:
+  name: "YMERA AI Platform"
+  version: "1.0.0"
+  environment: "${ENVIRONMENT:development}"
+  debug: "${DEBUG:true}"
+
+# ============================================
+# AI PROVIDERS CONFIGURATION
+# ============================================
+
+ai_providers:
+  # --- Gemini (Google) ---
+  gemini:
+    enabled: true
+    api_keys:
+      - "${GEMINI_API_KEY_1}"
+      - "${GEMINI_API_KEY_2:}"  # Optional; defaults to empty string if not provided
+      - "${GEMINI_API_KEY_3:}"  # Optional; defaults to empty string if not provided
+    rotation_strategy: "round_robin"  # round_robin, least_used, weighted
+    models:
+      - name: "gemini-2.0-flash-exp"
+        max_tokens: 1048576
+        temperature: 1.0
+        priority: 1
+      - name: "gemini-1.5-flash"
+        max_tokens: 1048576
+        temperature: 1.0
+        priority: 2
+      - name: "gemini-1.5-pro"
+        max_tokens: 2097152
+        temperature: 1.0
+        priority: 3
+      - name: "gemini-1.5-flash-8b"
+        max_tokens: 1048576
+        temperature: 1.0
+        priority: 4
+    rate_limits:
+      requests_per_minute: 60
+      tokens_per_minute: 4000000
+    retry:
+      max_attempts: 3
+      backoff_factor: 2
+
+  # --- Mistral AI ---
+  mistral:
+    enabled: true
+    api_key: "${MISTRAL_API_KEY}"
+    base_url: "https://api.mistral.ai/v1"
+    models:
+      - name: "mistral-large-latest"
+        max_tokens: 128000
+        temperature: 0.7
+      - name: "ministral-3b-latest"
+        max_tokens: 32000
+        temperature: 0.7
+      - name: "ministral-8b-latest"
+        max_tokens: 128000
+        temperature: 0.7
+      - name: "ministral-14b-latest"
+        max_tokens: 128000
+        temperature: 0.7
+      - name: "codestral-latest"
+        max_tokens: 32000
+        temperature: 0.7
+      - name: "pixtral-large-latest"
+        max_tokens: 128000
+        temperature: 0.7
+    rate_limits:
+      requests_per_minute: 60
+      tokens_per_month: 1000000000
+
+  # --- Groq ---
+  groq:
+    enabled: true
+    api_key: "${GROQ_API_KEY}"
+    base_url: "https://api.groq.com/openai/v1"
+    models:
+      - name: "llama-3.1-8b-instant"
+        max_tokens: 8192
+        temperature: 0.7
+        priority: 1  # Fastest
+      - name: "llama-3.3-70b-versatile"
+        max_tokens: 32768
+        temperature: 0.7
+      - name: "llama-4-maverick-17b"
+        max_tokens: 32768
+        temperature: 0.7
+      - name: "qwen/qwen3-32b"
+        max_tokens: 32768
+        temperature: 0.7
+      - name: "moonshotai/kimi-k2-instruct"
+        max_tokens: 200000
+        temperature: 0.7
+      - name: "openai/gpt-oss-120b"
+        max_tokens: 32768
+        temperature: 0.7
+    rate_limits:
+      requests_per_day: 14400
+      requests_per_minute: 30
+
+  # --- OpenRouter ---
+  openrouter:
+    enabled: true
+    api_key: "${OPENROUTER_API_KEY}"
+    base_url: "https://openrouter.ai/api/v1"
+    models:
+      - name: "deepseek/deepseek-r1:free"
+        max_tokens: 8192
+      - name: "deepseek/deepseek-chat-v3-0324:free"
+        max_tokens: 163840
+      - name: "deepseek/deepseek-coder-6.7b-instruct:free"
+        max_tokens: 8192
+      - name: "aws/amazon-nova-lite-v1:free"
+        max_tokens: 300000
+      - name: "aws/amazon-nova-micro-v1:free"
+        max_tokens: 128000
+      - name: "microsoft/phi-3-mini-128k-instruct:free"
+        max_tokens: 128000
+      - name: "google/gemma-2-9b-it:free"
+        max_tokens: 8192
+      - name: "meta-llama/llama-3.2-3b-instruct:free"
+        max_tokens: 131072
+      - name: "nousresearch/hermes-3-llama-3.1-405b:free"
+        max_tokens: 16384
+      - name: "liquid/lfm-40b:free"
+        max_tokens: 32768
+      - name: "sao10k/l3-euryale-70b:free"
+        max_tokens: 8192
+      - name: "gryphe/mythomax-l2-13b:free"
+        max_tokens: 8192
+      - name: "undi95/toppy-m-7b:free"
+        max_tokens: 4096
+      - name: "huggingfaceh4/zephyr-7b-beta:free"
+        max_tokens: 4096
+
+  # --- HuggingFace ---
+  huggingface:
+    enabled: true
+    api_key: "${HUGGINGFACE_API_KEY}"
+    base_url: "https://api-inference.huggingface.co/models"
+    models:
+      - name: "Qwen/Qwen2.5-Coder-32B-Instruct"
+        max_tokens: 131072
+      - name: "deepseek-ai/deepseek-coder-33b-instruct"
+        max_tokens: 16384
+      - name: "bigcode/starcoder2-15b"
+        max_tokens: 16384
+      - name: "WizardLM/WizardCoder-Python-34B-V1.0"
+        max_tokens: 8192
+      - name: "meta-llama/Llama-3.2-11B-Vision-Instruct"
+        max_tokens: 131072
+      - name: "microsoft/Phi-3.5-mini-instruct"
+        max_tokens: 128000
+      - name: "mistralai/Mixtral-8x22B-Instruct-v0.1"
+        max_tokens: 65536
+      - name: "Qwen/Qwen2-VL-7B-Instruct"
+        max_tokens: 32768
+      - name: "HuggingFaceH4/zephyr-7b-beta"
+        max_tokens: 8192
+      - name: "tiiuae/falcon-40b-instruct"
+        max_tokens: 8192
+      - name: "NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO"
+        max_tokens: 32768
+      - name: "openchat/openchat-3.5-1210"
+        max_tokens: 8192
+    rate_limits:
+      requests_per_minute: 20
+
+  # --- Cohere ---
+  cohere:
+    enabled: true
+    api_key: "${COHERE_API_KEY}"
+    base_url: "https://api.cohere.ai/v1"
+    models:
+      - name: "embed-english-v3.0"
+        type: "embedding"
+        dimensions: 1024
+      - name: "command-r"
+        max_tokens: 128000
+        temperature: 0.7
+      - name: "command-r-plus"
+        max_tokens: 128000
+        temperature: 0.7
+    rate_limits:
+      requests_per_minute: 100
+
+  # --- Together AI ---
+  together:
+    enabled: true
+    api_key: "${TOGETHER_API_KEY}"
+    base_url: "https://api.together.xyz/v1"
+    models:
+      - name: "meta-llama/Llama-3-70b-chat-hf"
+        max_tokens: 8192
+      - name: "mistralai/Mixtral-8x22B-Instruct-v0.1"
+        max_tokens: 65536
+      - name: "Qwen/Qwen2-72B-Instruct"
+        max_tokens: 32768
+      - name: "codellama/CodeLlama-70b-Instruct-hf"
+        max_tokens: 16384
+      - name: "deepseek-ai/deepseek-coder-33b-instruct"
+        max_tokens: 16384
+      - name: "WizardLM/WizardCoder-Python-34B-V1.0"
+        max_tokens: 8192
+    monthly_credits: 25
+
+  # --- Anthropic Claude (Optional) ---
+  anthropic:
+    enabled: false
+    api_key: "${ANTHROPIC_API_KEY:}"
+    base_url: "https://api.anthropic.com/v1"
+    models:
+      - name: "claude-3-haiku-20240307"
+        max_tokens: 200000
+        temperature: 0.7
+      - name: "claude-3-sonnet-20240229"
+        max_tokens: 200000
+        temperature: 0.7
+
+  # --- Replicate (Optional) ---
+  replicate:
+    enabled: false
+    api_token: "${REPLICATE_API_TOKEN:}"
+    base_url: "https://api.replicate.com/v1"
+
+# ============================================
+# INTELLIGENT ROUTING
+# ============================================
+
+routing:
+  strategy: "complexity_based"  # complexity_based, cost_optimized, speed_optimized
+  fallback_enabled: true
+  fallback_chain:
+    - groq
+    - openrouter
+    - gemini
+    - mistral
+  task_mapping:
+    simple:
+      - groq/llama-3.1-8b-instant
+      - openrouter/gemma-2-9b-it:free
+    moderate:
+      - gemini/gemini-1.5-flash
+      - mistral/ministral-8b-latest
+    complex:
+      - gemini/gemini-1.5-pro
+      - openrouter/hermes-3-llama-3.1-405b:free
+    code:
+      - huggingface/Qwen2.5-Coder-32B-Instruct
+      - together/WizardCoder-Python-34B-V1.0
+    embeddings:
+      - cohere/embed-english-v3.0
+    rag:
+      - cohere/command-r
+      - cohere/command-r-plus
+
+# ============================================
+# CACHING CONFIGURATION
+# ============================================
+
+caching:
+  enabled: "${CACHE_ENABLED:true}"
+  strategy: "three_tier"
+  tiers:
+    memory:
+      enabled: true
+      size_mb: "${MEMORY_CACHE_SIZE:100}"
+      ttl_seconds: 300
+    redis:
+      enabled: true
+      url: "${REDIS_URL}"
+      ttl_seconds: "${CACHE_TTL:3600}"
+    cloud:
+      enabled: false
+      provider: "s3"
+      ttl_seconds: 86400
+
+# ============================================
+# LANGCHAIN CONFIGURATION
+# ============================================
+
+langchain:
+  enabled: "${ENABLE_RAG:true}"
+  vector_stores:
+    faiss:
+      enabled: true
+      persist_directory: "./data/faiss"
+    chroma:
+      enabled: true
+      persist_directory: "./data/chroma"
+    qdrant:
+      enabled: true
+      url: "${QDRANT_URL:http://localhost:6333}"
+      api_key: "${QDRANT_API_KEY:}"
+    pinecone:
+      enabled: false
+      api_key: "${PINECONE_API_KEY:}"
+      environment: "${PINECONE_ENVIRONMENT:}"
+  agents:
+    enabled: "${ENABLE_AGENTS:true}"
+    tools_enabled: true
+    max_iterations: 10
+  memory:
+    enabled: "${ENABLE_MEMORY:true}"
+    type: "buffer"  # buffer, summary, vector
+    max_messages: 20
+
+# ============================================
+# MCP TOOLS CONFIGURATION
+# ============================================
+
+mcp_tools:
+  python:
+    enabled: true
+    sandbox: true
+    timeout: 30
+  nodejs:
+    enabled: true
+    sandbox: true
+    timeout: 30
+  filesystem:
+    enabled: true
+    allowed_dirs:
+      - "./workspace"
+      - "./data"
+    restricted_dirs:
+      - "/etc"
+      - "/root"
+  github:
+    enabled: true
+    token: "${GITHUB_TOKEN}"
+  databases:
+    postgres:
+      enabled: true
+      url: "${POSTGRES_URL}"
+    sqlite:
+      enabled: true
+      path: "${SQLITE_DB_PATH}"
+    redis:
+      enabled: true
+      url: "${REDIS_URL}"
+  docker:
+    enabled: true
+    socket: "/var/run/docker.sock"
+  kubernetes:
+    enabled: false
+    config_path: "${KUBE_CONFIG}"
+
+# ============================================
+# ML/LEARNING CONFIGURATION
+# ============================================
+
+ml_learning:
+  mlflow:
+    tracking_uri: "${MLFLOW_TRACKING_URI}"
+    artifact_root: "${MLFLOW_ARTIFACT_ROOT}"
+  wandb:
+    enabled: true
+    api_key: "${WANDB_API_KEY:}"
+    project: "${WANDB_PROJECT:ymera-ml}"
+  neptune:
+    enabled: false
+    api_token: "${NEPTUNE_API_TOKEN:}"
+    project: "${NEPTUNE_PROJECT:}"
+  training:
+    auto_save: true
+    checkpoint_frequency: 100
+    early_stopping: true
+    patience: 10
+
+# ============================================
+# INFRASTRUCTURE CONFIGURATION
+# ============================================
+
+infrastructure:
+  security:
+    bandit:
+      enabled: true
+      severity_threshold: "medium"
+    trivy:
+      enabled: true
+      scan_containers: true
+    owasp_zap:
+      enabled: false
+      target_url: ""
+  monitoring:
+    prometheus:
+      enabled: true
+      port: "${PROMETHEUS_PORT:9090}"
+    grafana:
+      enabled: false
+      port: "${GRAFANA_PORT:3000}"
+  logging:
+    level: "${LOG_LEVEL:INFO}"
+    format: "json"
+    output:
+      - "console"
+      - "file"
+    file_path: "./logs/ymera.log"
+    elasticsearch:
+      enabled: false
+      url: "${ELASTICSEARCH_URL:}"
+
+# ============================================
+# COMMUNICATION CONFIGURATION
+# ============================================
+
+communication:
+  celery:
+    broker_url: "${REDIS_URL}"
+    result_backend: "${REDIS_URL}"
+    task_serializer: "json"
+    result_serializer: "json"
+  rabbitmq:
+    enabled: false
+    url: "amqp://guest:guest@localhost:5672/"
+  slack:
+    enabled: false
+    bot_token: "${SLACK_BOT_TOKEN:}"
+  email:
+    enabled: false
+    smtp_host: "${SMTP_HOST:}"
+    smtp_port: "${SMTP_PORT:587}"
+    username: "${SMTP_USER:}"
+    password: "${SMTP_PASSWORD:}"
+
+# ============================================
+# APPLICATION SETTINGS
+# ============================================
+
+application:
+  port: "${APP_PORT:8000}"
+  host: "0.0.0.0"
+  workers: 4
+  timeout: "${REQUEST_TIMEOUT:30}"
+  cors:
+    enabled: true
+    origins:
+      - "*"
+  rate_limiting:
+    enabled: "${RATE_LIMIT_ENABLED:true}"
+    requests: "${RATE_LIMIT_REQUESTS:100}"
+    period: "${RATE_LIMIT_PERIOD:60}"
