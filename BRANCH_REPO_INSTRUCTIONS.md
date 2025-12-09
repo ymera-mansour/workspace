@@ -39,7 +39,7 @@ Use the steps below to publish only this branch into a fresh repository.
 3. Create the initial commit and push as `main` (or any name you prefer):  
    ```bash
    git add .
-   git commit -m "Initial import from copilot/create-new-repo-branch"
+   git commit -m "Initial import from copilot/review-gemini-models-integration"
    git branch -M main
    git remote add origin <NEW_REPO_URL>
    git push -u origin main
