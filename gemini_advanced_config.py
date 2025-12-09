@@ -292,8 +292,8 @@ class APIKeyRotationManager:
             if elapsed_seconds >= 60:
                 key_info.rpm_used = 0
             
-            # Reset RPD daily
-            if (now - key_info.last_reset).days >= 1:
+            # Reset RPD daily - use total_seconds() for accurate calculation
+            if (now - key_info.last_reset).total_seconds() >= 86400:
                 key_info.rpd_used = 0
                 key_info.last_reset = now
     
