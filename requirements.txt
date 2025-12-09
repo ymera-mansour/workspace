@@ -1,0 +1,127 @@
+# ============================================
+# YMERA AI Platform - Python Dependencies
+# ============================================
+
+# Core Dependencies
+python-dotenv>=1.0.0
+pyyaml>=6.0
+requests>=2.31.0
+aiohttp>=3.9.0
+
+# AI Provider SDKs
+google-generativeai>=0.3.0  # Gemini
+mistralai>=0.0.11  # Mistral
+groq>=0.4.0  # Groq
+cohere>=4.37  # Cohere
+together>=0.2.0  # Together AI
+anthropic>=0.7.0  # Claude (optional)
+replicate>=0.22.0  # Replicate (optional)
+
+# LangChain Framework
+langchain>=0.1.0
+langchain-core>=0.1.0
+langchain-community>=0.0.10
+langchain-google-genai>=0.0.5
+langchain-mistralai>=0.0.1
+langchain-groq>=0.0.1
+langchain-cohere>=0.0.1
+langchain-together>=0.0.1
+langchain-huggingface>=0.0.1
+langchain-anthropic>=0.0.1  # Optional
+
+# Vector Stores
+faiss-cpu>=1.7.4
+chromadb>=0.4.18
+qdrant-client>=1.7.0
+pinecone-client>=2.2.4  # Optional
+
+# ML/Learning Frameworks
+tensorflow>=2.15.0
+torch>=2.1.0
+scikit-learn>=1.3.0
+xgboost>=2.0.0
+
+# ML Training & Optimization
+optuna>=3.5.0
+ray[tune]>=2.9.0
+wandb>=0.16.0
+mlflow>=2.9.0
+dvc>=3.35.0
+auto-sklearn>=0.15.0
+
+# ML Monitoring
+evidently>=0.4.0
+whylogs>=1.3.0
+neptune>=1.8.0  # Optional
+
+# NLP Tools
+spacy>=3.7.0
+nltk>=3.8.1
+transformers>=4.36.0
+gensim>=4.3.0
+textblob>=0.17.1
+sentence-transformers>=2.2.0
+
+# File Processing
+PyPDF2>=3.0.0
+python-docx>=1.1.0
+openpyxl>=3.1.0
+Pillow>=10.1.0
+python-magic>=0.4.27
+python-magic-bin>=0.4.14; sys_platform == 'win32'
+
+# Security Tools
+bandit>=1.7.0
+safety>=2.3.0
+semgrep>=1.50.0
+
+# Communication & Task Queue
+celery>=5.3.0
+redis>=5.0.0
+pika>=1.3.0  # RabbitMQ client
+pyzmq>=25.1.0
+grpcio>=1.60.0
+grpcio-tools>=1.60.0
+python-socketio>=5.10.0
+
+# Testing & Quality
+pytest>=7.4.0
+pytest-asyncio>=0.23.0
+pytest-cov>=4.1.0
+coverage>=7.3.0
+pylint>=3.0.0
+black>=23.12.0
+isort>=5.13.0
+mypy>=1.8.0
+locust>=2.20.0
+
+# Database Clients
+psycopg2-binary>=2.9.0
+sqlalchemy>=2.0.0
+alembic>=1.13.0
+
+# Monitoring & Logging
+prometheus-client>=0.19.0
+python-json-logger>=2.0.0
+
+# Web Framework (for API)
+fastapi>=0.108.0
+uvicorn>=0.25.0
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# Utilities
+tqdm>=4.66.0
+click>=8.1.0
+rich>=13.7.0
+httpx>=0.26.0
+tenacity>=8.2.0
+
+# Development Tools
+ipython>=8.19.0
+jupyter>=1.0.0
+notebook>=7.0.0
+
+# Type Checking
+types-pyyaml>=6.0.0
+types-requests>=2.31.0
