@@ -17,7 +17,11 @@ The current branch is `copilot/create-new-repo-branch`. Use the steps below to p
    ```bash
    git push -u origin copilot/create-new-repo-branch
    ```
-4. In the new repo, set this branch as the default in your hosting UI (only needed if you want to keep this branch name; otherwise rename to something like `main`).
+4. In the new repo, set this branch as the default in your hosting UI. If you prefer to call it `main`, rename locally and push that instead:  
+   ```bash
+   git branch -M main
+   git push -u origin main
+   ```
 
 ## Option B: Start a clean history (single initial commit)
 1. Clone just this branch:  
@@ -39,4 +43,4 @@ The current branch is `copilot/create-new-repo-branch`. Use the steps below to p
    git push -u origin main
    ```
 
-Pick Option A if you need to keep the branch's commit history; pick Option B if you want a clean, single-commit starting point.
+Pick Option A to retain full history and authorship; pick Option B when you want a clean, single-commit starting point (for example, when shipping a product snapshot or avoiding sensitive history).
