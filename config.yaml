@@ -19,8 +19,8 @@ ai_providers:
     enabled: true
     api_keys:
       - "${GEMINI_API_KEY_1}"
-      - "${GEMINI_API_KEY_2:null}"  # Optional; set to null if not provided
-      - "${GEMINI_API_KEY_3:null}"  # Optional; set to null if not provided
+      - "${GEMINI_API_KEY_2:}"  # Optional; defaults to empty string if not provided
+      - "${GEMINI_API_KEY_3:}"  # Optional; defaults to empty string if not provided
     rotation_strategy: "round_robin"  # round_robin, least_used, weighted
     models:
       - name: "gemini-2.0-flash-exp"
