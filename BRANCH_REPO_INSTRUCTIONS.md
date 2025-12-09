@@ -1,23 +1,25 @@
 # Create a new repository from this branch only
 
-The current branch is `copilot/create-new-repo-branch`. Use the steps below to publish only this branch into a fresh repository.
+Target branch: `copilot/review-gemini-models-integration`  
+Desired new repository name: `builder`  
+Use the steps below to publish only this branch into a fresh repository.
 
 ## Option A: Preserve this branch's history
 1. Clone just this branch:  
    ```bash
-   git clone --branch copilot/create-new-repo-branch --single-branch <CURRENT_REPO_URL> new-repo
+   git clone --branch copilot/review-gemini-models-integration --single-branch <SOURCE_REPO_URL> builder
    ```
 2. Enter the clone and point it at the new remote:  
    ```bash
-   cd new-repo
+   cd builder
    git remote remove origin
    git remote add origin <NEW_REPO_URL>
    ```
 3. Push the branch to the new repository:  
    ```bash
-   git push -u origin copilot/create-new-repo-branch
+   git push -u origin copilot/review-gemini-models-integration
    ```
-4. In the new repo, set this branch as the default in your hosting UI. If you prefer to call it `main`, rename locally and push that instead:  
+4. In the new repo, set this branch as the default in your hosting UI (use your provider's UI, e.g., GitHub or GitLab project settings). If you prefer to call it `main`, rename locally and push that instead:  
    ```bash
    git branch -M main
    git push -u origin main
@@ -26,8 +28,8 @@ The current branch is `copilot/create-new-repo-branch`. Use the steps below to p
 ## Option B: Start a clean history (single initial commit)
 1. Clone just this branch:  
    ```bash
-   git clone --branch copilot/create-new-repo-branch --single-branch <CURRENT_REPO_URL> new-repo
-   cd new-repo
+   git clone --branch copilot/review-gemini-models-integration --single-branch <SOURCE_REPO_URL> builder
+   cd builder
    ```
 2. Strip existing history and reinitialize:  
    ```bash
@@ -44,3 +46,5 @@ The current branch is `copilot/create-new-repo-branch`. Use the steps below to p
    ```
 
 Pick Option A to retain full history and authorship; pick Option B when you want a clean, single-commit starting point (for example, when shipping a product snapshot or avoiding sensitive history).
+
+Security note: Option B does not scrub sensitive data from any clones that already exist. If the original repository may contain sensitive history, use proper history-rewrite tools (e.g., `git filter-repo`) and coordinate with all copies.
