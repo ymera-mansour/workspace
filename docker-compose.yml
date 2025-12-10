@@ -8,13 +8,28 @@ services:
       - "8000:8000"
     environment:
       - PYTHONUNBUFFERED=1
+    env_file:
+      - .env
     volumes:
+      # Application data and logs
       - ./data:/app/data
       - ./logs:/app/logs
+      # Configuration files
+      - ./00-FOUNDATION/config.yaml:/app/00-FOUNDATION/config.yaml:ro
+      # Local workspace access (for Desktop Commander - adjust path as needed)
+      # Windows: Use format - /c/Users/YourName/Desktop/workspace:/mnt/local_workspace
+      # Linux/Mac: Use format - ~/workspace:/mnt/local_workspace
+      - ./workspace:/mnt/local_workspace
+      # State management
+      - ./.ymera_state:/app/.ymera_state
+      - ./.ymera_results:/app/.ymera_results
     depends_on:
       - redis
       - postgres
     command: uvicorn api:app --host 0.0.0.0 --port 8000
+    restart: unless-stopped
+    networks:
+      - ymera-network
 
   redis:
     image: redis:7-alpine
@@ -23,6 +38,9 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - ymera-network
 
   postgres:
     image: postgres:15-alpine
@@ -35,6 +53,14 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - ymera-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ymera"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   prometheus:
     image: prom/prometheus:latest
@@ -42,8 +68,14 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
+    restart: unless-stopped
+    networks:
+      - ymera-network
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
 
   grafana:
     image: grafana/grafana:latest
@@ -52,13 +84,21 @@ services:
       - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
       - grafana_data:/var/lib/grafana
     depends_on:
       - prometheus
+    restart: unless-stopped
+    networks:
+      - ymera-network
 
 volumes:
   redis_data:
   postgres_data:
   prometheus_data:
   grafana_data:
+
+networks:
+  ymera-network:
+    driver: bridge
