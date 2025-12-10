@@ -1,5 +1,5 @@
-version: '3.8'
-
+# Docker Compose configuration for YMERA Platform
+# Note: 'version' is no longer required in Compose V2
 services:
   ymera:
     build: .
@@ -16,10 +16,12 @@ services:
       - ./logs:/app/logs
       # Configuration files
       - ./00-FOUNDATION/config.yaml:/app/00-FOUNDATION/config.yaml:ro
-      # Local workspace access (for Desktop Commander - adjust path as needed)
-      # Windows: Use format - /c/Users/YourName/Desktop/workspace:/mnt/local_workspace
-      # Linux/Mac: Use format - ~/workspace:/mnt/local_workspace
-      - ./workspace:/mnt/local_workspace
+      # Local workspace access (for Desktop Commander)
+      # IMPORTANT: Modify this path for your specific setup:
+      # - Windows: Use /c/Users/YourName/Desktop/workspace:/mnt/local_workspace
+      # - Linux/Mac: Use ~/workspace:/mnt/local_workspace
+      # - Or use environment variable: ${LOCAL_WORKSPACE_PATH:-./workspace}:/mnt/local_workspace
+      - ${LOCAL_WORKSPACE_PATH:-./workspace}:/mnt/local_workspace
       # State management
       - ./.ymera_state:/app/.ymera_state
       - ./.ymera_results:/app/.ymera_results
@@ -73,6 +75,8 @@ services:
     restart: unless-stopped
     networks:
       - ymera-network
+    # Override default command to specify config location and storage path
+    # These arguments ensure Prometheus uses our custom config and persists data
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
