@@ -1,0 +1,78 @@
+# Git
+.git
+.gitignore
+.github
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+ymera_platform.log
+
+# State and runtime data
+.ymera_state/
+.ymera_results/
+mlruns/
+
+# Test files
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Documentation (not needed in container)
+DOCUMENTATION/
+*.md
+!README.md
+
+# Archives
+archive/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Docker files (not needed in image)
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# Development files
+notebook/
+*.ipynb
+.jupyter/
+
+# Data directories (mount as volumes instead)
+data/
+workspace/
